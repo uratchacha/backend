@@ -10,11 +10,11 @@ public class SampleController {
     @GetMapping("/test")
     public String test(@RequestParam(required = false) String name) {
         if (name == null || name.isBlank()) {
-            throw new MyException(MyErrorCode.INVALID_INPUT);
+            throw new MyException(MyErrorCode.INVALID_INPUT); // 400 BAD_REQUEST 발생
         }
 
-        if ("admin".equals(name)) { // 특정 사용자 찾을 수 없는 경우 예외 발생
-            throw new MyException(MyErrorCode.USER_NOT_FOUND);
+        if ("admin".equals(name)) {
+            throw new MyException(MyErrorCode.USER_NOT_FOUND); // 404 NOT_FOUND 발생
         }
 
         return "Hello, " + name;

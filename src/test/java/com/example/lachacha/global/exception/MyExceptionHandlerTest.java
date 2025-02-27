@@ -4,6 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -21,6 +22,7 @@ class MyExceptionHandlerTest {
     }
 
     @Test
+    @WithMockUser
     void testHandleMyException() throws Exception {
         mockMvc.perform(get("/test?name=")) // 빈 값 전달
                 .andExpect(status().isBadRequest())
@@ -29,14 +31,16 @@ class MyExceptionHandlerTest {
     }
 
     @Test
+    @WithMockUser
     void testHandleUserNotFoundException() throws Exception {
-        mockMvc.perform(get("/test?name=admin")) // 특정 사용자 존재하지 않는 경우
-                .andExpect(status().isBadRequest())
+        mockMvc.perform(get("/test?name=admin"))
+                .andExpect(status().isNotFound()) // ✅ 404 NOT_FOUND 기대
                 .andExpect(jsonPath("$.code").value("USER_NOT_FOUND"))
                 .andExpect(jsonPath("$.message").value("사용자를 찾을 수 없습니다."));
     }
 
     @Test
+    @WithMockUser
     void testHandleUnexpectedException() throws Exception {
         mockMvc.perform(get("/unexpected-error"))
                 .andExpect(status().isInternalServerError())
