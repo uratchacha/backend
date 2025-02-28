@@ -29,6 +29,8 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok'
     implementation 'io.jsonwebtoken:jjwt:0.9.1'
     implementation 'com.squareup.okio:okio:3.0.0'
+    implementation 'javax.xml.bind:jaxb-api:2.3.1'
+
     //firebase
     //implementation 'com.google.firebase:firebase-admin:6.8.1'
     //implementation group: 'com.squareup.okhttp3', name: 'okhttp', version: '4.2.2'

@@ -38,7 +38,7 @@ public class TokenProvider {
                 .setExpiration(expiry)
                 .setSubject(user.getUsername())
                 .claim("id", user.getId())
-                .signWith(SignatureAlgorithm.HS256, jwtProperties.getSecretKey())
+                .signWith(SignatureAlgorithm.HS256, jwtProperties.getSecret())
                 .compact();
     }
 
@@ -46,7 +46,7 @@ public class TokenProvider {
     {
         try{
             Jwts.parser()
-                    .setSigningKey(jwtProperties.getSecretKey())
+                    .setSigningKey(jwtProperties.getSecret())
                     .parseClaimsJws(token);
             return true;
         } catch (Exception e) {
@@ -72,7 +72,7 @@ public class TokenProvider {
     private Claims getClaims(String token)
     {
         return Jwts.parser()
-                .setSigningKey(jwtProperties.getSecretKey())
+                .setSigningKey(jwtProperties.getSecret())
                 .parseClaimsJws(token)
                 .getBody();
     }
