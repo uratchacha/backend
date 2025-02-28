@@ -1,9 +1,8 @@
 spring:
   datasource:
-    url: ${DATASOURCE_URL}
-    username: ${DB_USERNAME:root}
+    url: ${DATASOURCE_URL:jdbc:h2:mem:testdb}
+    username: ${DB_USERNAME}
     password: ${DATASOURCE_PASSWORD}
-    driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
       ddl-auto: update
