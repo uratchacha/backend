@@ -1,3 +1,17 @@
+spring:
+  datasource:
+    url: ${DATASOURCE_URL:jdbc:h2:mem:testdb}
+    username: ${DB_USERNAME}
+    password: ${DATASOURCE_PASSWORD}
+  jpa:
+    hibernate:
+      ddl-auto: update
+      default_batch_fetch_size: 1000
+      jdbc:
+        time_zone: Asia/Seoul
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
 jwt:
   issuer: ${JWT_ISSUER}
   secret: ${JWT_SECRET}
