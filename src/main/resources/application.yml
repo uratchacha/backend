@@ -1,3 +1,18 @@
+spring:
+  datasource:
+    url: ${DATASOURCE_URL}
+    username: ${DB_USERNAME:root}
+    password: ${DATASOURCE_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+      default_batch_fetch_size: 1000
+      jdbc:
+        time_zone: Asia/Seoul
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
 jwt:
   issuer: ${JWT_ISSUER}
   secret: ${JWT_SECRET}
