@@ -1,17 +1,46 @@
 spring:
-  datasource:
-    url: ${DATASOURCE_URL:jdbc:h2:mem:testdb}
-    username: ${DB_USERNAME}
-    password: ${DATASOURCE_PASSWORD}
-  jpa:
-    hibernate:
-      ddl-auto: update
-      default_batch_fetch_size: 1000
-      jdbc:
-        time_zone: Asia/Seoul
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.MySQL8Dialect
+  profiles:
+    active: local
+    group:
+      local: local, common, secret
+      blue: blue, common, secret
+      green: green, common, secret
+server:
+  env: blue
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: common
+
 jwt:
   issuer: ${JWT_ISSUER}
   secret: ${JWT_SECRET}
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: blue
+
+server:
+  port: 8080
+  serverAddress: 3.37.80.119
+
+serverName: blue_server
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: green
+
+server:
+  port: 8081
+  serverAddress: 3.37.80.119
+
+serverName: green_server
