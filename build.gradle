@@ -37,6 +37,9 @@ dependencies {
     //implementation 'com.google.firebase:firebase-admin:6.8.1'
     //implementation group: 'com.squareup.okhttp3', name: 'okhttp', version: '4.2.2'
 
+    //DB
+    implementation 'mysql:mysql-connector-java:8.0.33'
+
 }
 
 tasks.named('test') {
