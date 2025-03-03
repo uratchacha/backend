@@ -34,10 +34,7 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Build Docker
-        run: docker build --platform linux/amd64 \
-          --build-arg PROFILES=${{ env.TARGET_UPSTREAM }} \
-          --build-arg ENV=${{ env.TARGET_UPSTREAM }} \
-          -t ${{ secrets.DOCKERHUB_USERNAME }}/backend_server .
+        run: docker build --platform linux/amd64 -t ${{ secrets.DOCKERHUB_USERNAME }}/backend_server .
 
       - name: Push Docker
         run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/backend_server:latest
