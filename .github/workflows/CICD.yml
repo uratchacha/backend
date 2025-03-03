@@ -78,12 +78,18 @@ jobs:
             sudo docker-compose -f docker-compose-${{env.TARGET_UPSTREAM}}.yml up -d
 
       - name: Check deploy server URL
-        uses: jtalk/url-health-check-action@v4
-        with:
-          url: http://${{ secrets.BACKEND_SERVER_IP }}:${{env.STOPPED_PORT}}/env
-          headers: '{"X-DEPLOY-TOKEN": "${{ secrets.DEPLOY_SECRET_TOKEN }}"}'
-          max-attempts: 5
-          retry-delay: 10s
+        run: |
+          for i in {1..5}; do
+            STATUS=$(curl -o /dev/null -w "%{http_code}" -H "X-DEPLOY-TOKEN: ${{ secrets.DEPLOY_SECRET_TOKEN }}" "http://${{ secrets.BACKEND_SERVER_IP }}:${{env.STOPPED_PORT}}/env")
+            if [ "$STATUS" -eq 200 ]; then
+              echo "Health check successful!"
+              exit 0
+            fi
+            echo "Health check failed. Retrying in 10 seconds..."
+            sleep 10
+          done
+          echo "Health check failed after 5 attempts."
+          exit 1
 
       - name: Change nginx upstream
         uses: appleboy/ssh-action@v0.1.10
