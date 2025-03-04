@@ -12,7 +12,7 @@ ARG DEPLOY_SECRET_TOKEN
 
 # Set environment variables
 ENV SPRING_PROFILES_ACTIVE=${PROFILES}
-ENV SERVER_ENV=$ENV
+ENV ENV=${ENV}
 ENV DB_URL=${DB_URL}
 ENV DB_USERNAME=${DB_USERNAME}
 ENV DB_PASSWORD=${DB_PASSWORD}
@@ -25,7 +25,7 @@ COPY build/libs/*.jar app.jar
 # Run the application with environment variables
 ENTRYPOINT ["java", \
     "-Dspring.profiles.active=${SPRING_PROFILES_ACTIVE}", \
-    "-Dserver.env=${SERVER_ENV}", \
+    "-Dserver.env=${ENV}", \
     "-Dspring.datasource.url=${DB_URL}", \
     "-Dspring.datasource.username=${DB_USERNAME}", \
     "-Dspring.datasource.password=${DB_PASSWORD}", \
