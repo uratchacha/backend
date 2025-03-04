@@ -83,7 +83,7 @@ jobs:
           script_stop: true
           script: |
             sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/backend_server:latest
-            sudo docker-compose -f docker-compose-${{env.TARGET_UPSTREAM}}.yml up -d --no-recreate --scale backend=1
+            sudo docker-compose -f docker-compose-${{env.TARGET_UPSTREAM}}.yml up -d --no-recreate
 
       - name: Check deploy server URL # 배포된 서버가 정상 작동하는지 확인
         run: |
