@@ -31,3 +31,5 @@ jobs:
         run: ./gradlew clean test
         env:
           SPRING_PROFILES_ACTIVE: test
+          JWT_ISSUER: ${{ secrets.JWT_ISSUER }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
