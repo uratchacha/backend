@@ -28,4 +28,4 @@ jobs:
         run: chmod +x gradlew
 
       - name: Build without tests
-        run: ./gradlew clean test -Dspring.profiles.active=test
+        run: ./gradlew clean test
