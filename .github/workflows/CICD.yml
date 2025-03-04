@@ -118,18 +118,21 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           script_stop: true
           script: |
-            echo "Stopping previous server: ${{ env.CURRENT_UPSTREAM }}"
+            echo "Checking if the previous server (${{ env.CURRENT_UPSTREAM }}) is running..."
 
-            # 현재 실행 중인 컨테이너를 안전하게 중지 및 삭제
-            if sudo docker ps -q --filter "name=${{ env.CURRENT_UPSTREAM }}" | grep -q .; then
+            # 기존 서버 컨테이너 확인
+            EXISTING_CONTAINER=$(sudo docker ps -q --filter "name=${{ env.CURRENT_UPSTREAM }}")
+
+            if [ -n "$EXISTING_CONTAINER" ]; then
               echo "Stopping container ${{ env.CURRENT_UPSTREAM }}..."
-              sudo docker stop ${{ env.CURRENT_UPSTREAM }} || true
+              sudo docker stop ${{ env.CURRENT_UPSTREAM }} || { echo "Failed to stop ${{ env.CURRENT_UPSTREAM }}"; exit 1; }
+  
               echo "Removing container ${{ env.CURRENT_UPSTREAM }}..."
-              sudo docker rm -f ${{ env.CURRENT_UPSTREAM }} || true
+              sudo docker rm -f ${{ env.CURRENT_UPSTREAM }} || { echo "Failed to remove ${{ env.CURRENT_UPSTREAM }}"; exit 1; }
             else
               echo "No running container found with name: ${{ env.CURRENT_UPSTREAM }}"
             fi
 
-            # 불필요한 Docker 리소스 정리 (중지된 컨테이너, 사용되지 않는 이미지/볼륨 삭제)
+            # 중지된 컨테이너 및 불필요한 리소스 정리 (단, 실행 중인 컨테이너는 영향을 받지 않도록 설정)
             echo "Cleaning up unused Docker resources..."
-            sudo docker system prune -af --volumes || true
+            sudo docker system prune -f --volumes || true
