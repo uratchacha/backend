@@ -51,7 +51,7 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
-      - name: Set target IP
+      - name: Set target IP # 현재 실행 중인 서버 확인
         run: |
           STATUS=$(curl -o /dev/null -w "%{http_code}" -H "X-DEPLOY-TOKEN: ${{ secrets.DEPLOY_SECRET_TOKEN }}" "http://${{ secrets.BACKEND_SERVER_IP }}/env")
           echo "HTTP STATUS: $STATUS"
@@ -74,7 +74,7 @@ jobs:
             echo "TARGET_UPSTREAM=blue" >> $GITHUB_ENV
           fi
           
-      - name: Deploy with Docker Compose
+      - name: Deploy with Docker Compose # 새로운 서버 배포
         uses: appleboy/ssh-action@v0.1.10
         with:
           username: ubuntu
@@ -85,7 +85,7 @@ jobs:
             sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/backend_server:latest
             sudo docker-compose -f docker-compose-${{env.TARGET_UPSTREAM}}.yml up -d
 
-      - name: Check deploy server URL
+      - name: Check deploy server URL # 배포된 서버가 정상 작동하는지 확인
         run: |
           set +e
           for i in {1..5}; do
@@ -100,7 +100,7 @@ jobs:
           echo "Health check failed after 5 attempts."
           exit 1
 
-      - name: Change nginx upstream
+      - name: Change nginx upstream # Nginx를 통해 새 서버로 트래픽 전환
         uses: appleboy/ssh-action@v0.1.10
         with:
           username: ubuntu
@@ -110,7 +110,7 @@ jobs:
           script: |
             sudo docker exec -i nginxserver bash -c 'echo "set \$service_url ${{ env.TARGET_UPSTREAM }};" > /etc/nginx/conf.d/service-env.inc && nginx -s reload' 
 
-      - name: Stop current server
+      - name: Stop current server # 기존 서버 정리 (중단된 컨테이너 삭제)
         uses: appleboy/ssh-action@v0.1.10
         with:
           username: ubuntu
@@ -118,4 +118,4 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           script_stop: true
           script: |
-            sudo docker system prune -f
+            sudo docker system prune -f # 사용하지 않는 컨테이너 및 이미지 정리
