@@ -1,3 +1,8 @@
+spring:
+  config:
+    activate:
+      on-profile: test
+
 jwt:
   issuer: ${JWT_ISSUER}
   secret: ${JWT_SECRET}
