@@ -87,7 +87,7 @@ jobs:
 
       - name: Check deploy server URL
         run: |
-          set +e  # ✅ 오류 발생해도 스크립트 계속 실행
+          set +e
           for i in {1..5}; do
             STATUS=$(curl -o /dev/null -w "%{http_code}" -H "X-DEPLOY-TOKEN: ${{ secrets.DEPLOY_SECRET_TOKEN }}" "http://${{ secrets.BACKEND_SERVER_IP }}:${{env.STOPPED_PORT}}/env")
             if [ "$STATUS" -eq 200 ]; then
