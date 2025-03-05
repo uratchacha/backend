@@ -1,17 +1,59 @@
 spring:
+  profiles:
+    active: local
+    group:
+      local: local, common
+      blue: blue, common
+      green: green, common
+      test: test
+server:
+  env: blue
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: common
+
   datasource:
-    url: ${DATASOURCE_URL:jdbc:h2:mem:testdb}
-    username: ${DB_USERNAME}
-    password: ${DATASOURCE_PASSWORD}
+    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/${DB_NAME:lachacha}?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:root}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
   jpa:
+    database-platform: org.hibernate.dialect.MySQL8Dialect
     hibernate:
-      ddl-auto: update
-      default_batch_fetch_size: 1000
-      jdbc:
-        time_zone: Asia/Seoul
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.MySQL8Dialect
+      ddl-auto: validate
+    show-sql: true
+
 jwt:
   issuer: ${JWT_ISSUER}
   secret: ${JWT_SECRET}
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: blue
+
+server:
+  port: 8080
+  serverAddress: 3.37.80.119
+
+serverName: blue_server
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: green
+
+server:
+  port: 8081
+  serverAddress: 3.37.80.119
+
+serverName: green_server
