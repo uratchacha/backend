@@ -43,3 +43,4 @@ jobs:
           SPRING_PROFILES_ACTIVE: test
           JWT_ISSUER: ${{ secrets.JWT_ISSUER }}
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          TEST_DATASOURCE_URL: jdbc:mysql://mysql:3306/testdb
