@@ -7,14 +7,19 @@ import com.example.lachacha.domain.chats.dto.request.PrivateChatsRequestDto;
 import com.example.lachacha.domain.user.application.UsersService;
 import com.example.lachacha.domain.user.domain.Users;
 import com.example.lachacha.domain.user.domain.UsersRepository;
+import com.example.lachacha.global.webSocket.notifications.NotificationHandler;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.ActiveProfiles;
 
+import java.io.IOException;
 import java.util.List;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -24,6 +29,8 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 public class ChatsServiceWithDBTest
 {
+    @Mock
+    private NotificationHandler notificationHandler;
     @Autowired
     private ChatRoomRepository chatRoomRepository;
     @Autowired
@@ -40,7 +47,7 @@ public class ChatsServiceWithDBTest
 
 
         usersService = new UsersService(usersRepository);
-        chatsService = new ChatsService(null,chatRoomRepository,usersService);
+        chatsService = new ChatsService(notificationHandler,chatRoomRepository,usersService);
 
 
     }
@@ -54,7 +61,7 @@ public class ChatsServiceWithDBTest
         usersRepository.save(user2);
     }
     @Test
-    void acceptChatRoomTest() {
+    void acceptChatRoomTest() throws IOException {
         // 채팅방 요청 DTO 생성
         setUser();
         List<Users> users = usersRepository.findAll();
@@ -64,6 +71,10 @@ public class ChatsServiceWithDBTest
 
         // 채팅방 생성 메서드 호출
         chatsService.acceptChatRoom(chatsRequestDto);
+        ArgumentCaptor<String> messageCaptor = ArgumentCaptor.forClass(String.class);
+        Mockito.verify(notificationHandler).sendNotification(Mockito.eq(1L), messageCaptor.capture());
+
+        System.out.println(messageCaptor.getValue());
 
         // 채팅방이 DB에 잘 저장되었는지 확인
         PrivateChatRoom privateChatRoom = (PrivateChatRoom) chatRoomRepository.findAll().get(0);

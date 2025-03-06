@@ -24,7 +24,7 @@ public class ChatsController
     }
 
     @PostMapping("/accept")
-    public ResponseEntity<ChatRoom> acceptChats(@RequestBody PrivateChatsRequestDto chatsRequestDto)
+    public ResponseEntity<Void> acceptChats(@RequestBody PrivateChatsRequestDto chatsRequestDto)
     {
         chatsService.acceptChatRoom(chatsRequestDto);
         return ResponseEntity.ok().build();

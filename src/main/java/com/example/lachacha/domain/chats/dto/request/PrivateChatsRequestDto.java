@@ -4,7 +4,7 @@ import lombok.Builder;
 
 @Builder
 public record PrivateChatsRequestDto(
-        Long userId1,
-        Long userId2
+        Long requesterId,
+        Long receiverId
 ) {
 }

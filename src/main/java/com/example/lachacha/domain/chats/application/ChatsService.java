@@ -12,6 +12,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -19,41 +20,55 @@ import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class ChatsService
 {
     private final NotificationHandler notificationHandler;
-
     private final ChatRoomRepository chatRoomRepository;
-
     private final UsersService userService;
+    private final ObjectMapper mapper=new ObjectMapper();
     public void requestChatRoom(Long requesterId, Long receiverId)
     {
         try {
-            String notificationMessage = createNotificationJson(requesterId,receiverId);
+            String notificationMessage = createRequestNotificationJson(requesterId,receiverId);
             notificationHandler.sendNotification(receiverId, notificationMessage);
         } catch (IOException e) {
             throw new ChatsException(MyErrorCode.NOTIFICATION_ERROR);
         }
     }
 
-    private String createNotificationJson(Long requesterId, Long receiverId) throws JsonProcessingException
+    private String createRequestNotificationJson(Long requesterId, Long receiverId) throws JsonProcessingException
     {
-        ObjectMapper mapper = new ObjectMapper();
         Map<String, Object> notificationData = new HashMap<>();
+        Users requesterUser = userService.findUsersById(requesterId);
+        notificationData.put("requesterUser", requesterUser);
         notificationData.put("requesterId", requesterId);
         notificationData.put("receiverId", receiverId);
         notificationData.put("message", "새로운 채팅 요청이 왔습니다.");
         return mapper.writeValueAsString(notificationData);
     }
 
-    public void acceptChatRoom(PrivateChatsRequestDto chatsRequestDto)
+    private String createResponseNotificationJson() throws JsonProcessingException
     {
-        Users users1 = userService.findUsersById(chatsRequestDto.userId1());
-        Users users2 = userService.findUsersById(chatsRequestDto.userId2());
+        Map<String, Object> notificationData = new HashMap<>();
+        notificationData.put("message", "채팅이 승낙되었습니다.");
+        return mapper.writeValueAsString(notificationData);
+    }
+    public void acceptChatRoom(PrivateChatsRequestDto chatsRequestDto) {
+        Users requester = userService.findUsersById(chatsRequestDto.requesterId());
+        Users receiver = userService.findUsersById(chatsRequestDto.receiverId());
         PrivateChatRoom privateChatRoom= PrivateChatRoom.builder()
-                .user1(users1)
-                .user2(users2)
+                .user1(requester)
+                .user2(receiver)
                 .build();
+
+        try {
+            String acceptResponseMessage = createResponseNotificationJson();
+            notificationHandler.sendNotification(requester.getId(), acceptResponseMessage);
+        } catch (IOException e) {
+            throw new ChatsException(MyErrorCode.NOTIFICATION_ERROR);
+        }
+
         chatRoomRepository.save(privateChatRoom);
     }
 }

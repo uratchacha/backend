@@ -2,6 +2,8 @@ package com.example.lachacha.global.chats;
 
 
 import com.example.lachacha.domain.chats.application.ChatsService;
+import com.example.lachacha.domain.user.application.UsersService;
+import com.example.lachacha.domain.user.domain.Users;
 import com.example.lachacha.global.auth.jwt.JwtProperties;
 import com.example.lachacha.global.auth.jwt.TokenProvider;
 import com.example.lachacha.global.webSocket.notifications.NotificationHandler;
@@ -20,6 +22,7 @@ import org.springframework.boot.test.autoconfigure.data.redis.DataRedisTest;
 import org.springframework.context.annotation.Import;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class ChatsServiceTest
@@ -28,6 +31,8 @@ public class ChatsServiceTest
     @Mock
     private NotificationHandler notificationHandler;
 
+    @Mock
+    private UsersService usersService;
     @InjectMocks
     private ChatsService chatsService;
 
@@ -41,8 +46,13 @@ public class ChatsServiceTest
     {
         Long requesterId = 1L;
         Long receiverId = 2L;
-        chatsService.requestChatRoom(requesterId, receiverId);
 
+
+        Users requesterUser = Users.builder().id(requesterId).username("sdssdsd").password("sdsdd").build();
+        when(usersService.findUsersById(requesterId)).thenReturn(requesterUser);
+
+
+        chatsService.requestChatRoom(requesterId, receiverId);
         ArgumentCaptor<String> messageCaptor = ArgumentCaptor.forClass(String.class);
         Mockito.verify(notificationHandler).sendNotification(Mockito.eq(receiverId), messageCaptor.capture());
 
