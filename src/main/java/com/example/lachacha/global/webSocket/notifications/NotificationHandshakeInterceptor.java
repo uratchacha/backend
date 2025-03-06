@@ -19,7 +19,7 @@ public class NotificationHandshakeInterceptor implements HandshakeInterceptor
             String userId = servletRequest.getServletRequest().getParameter("userId");
 
             if (userId != null) {
-                attributes.put("roomId", userId);
+                attributes.put("userId", userId);
             }
         }
         return true;

@@ -39,6 +39,6 @@ public class NotificationHandler extends TextWebSocketHandler {
     }
 
     private Long getUserId(WebSocketSession session) {
-            return (Long) session.getAttributes().get("userId");
+            return Long.parseLong((String)session.getAttributes().get("userId"));
         }
 }

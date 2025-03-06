@@ -1,12 +1,12 @@
 package com.example.lachacha.domain.chats.presentation;
 
 import com.example.lachacha.domain.chats.application.ChatsService;
-import com.example.lachacha.domain.chats.dto.request.ChatsRequestDto;
+import com.example.lachacha.domain.chats.domain.ChatRoom;
+import com.example.lachacha.domain.chats.dto.request.PrivateChatsRequestDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
 
 
 @RestController
@@ -15,12 +15,19 @@ import java.io.IOException;
 public class ChatsController
 {
     private final ChatsService chatsService;
+
     @GetMapping("/request")
-    public ResponseEntity<Void> requestChat(@RequestParam Long requesterId, @RequestParam Long receiverId)
+    public ResponseEntity<Void> requestChats(@RequestParam("requesterId") Long requesterId, @RequestParam("receiverId") Long receiverId)
     {
         chatsService.requestChatRoom(requesterId,receiverId);
         return ResponseEntity.ok().build();
     }
 
+    @PostMapping("/accept")
+    public ResponseEntity<ChatRoom> acceptChats(@RequestBody PrivateChatsRequestDto chatsRequestDto)
+    {
+        chatsService.acceptChatRoom(chatsRequestDto);
+        return ResponseEntity.ok().build();
+    }
 
 }
