@@ -1,18 +1,22 @@
-jwt:
-  issuer: ${JWT_ISSUER}
-  secret: ${JWT_SECRET}
-
 spring:
+  config:
+    activate:
+      on-profile: test
+
   datasource:
     url: jdbc:mysql://localhost:3306/testdb
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: root
     password: 1234
   jpa:
-    database-platform: org.hibernate.dialect.MySQLDialect
+    database-platform: org.hibernate.dialect.H2Dialect
     hibernate:
       ddl-auto: create-drop
     properties:
       hibernate:
         show_sql: true
         format_sql: true
+
+jwt:
+  issuer: ${JWT_ISSUER}
+  secret: ${JWT_SECRET}
