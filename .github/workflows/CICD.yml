@@ -20,6 +20,14 @@ jobs:
           distribution: 'temurin'
           cache: gradle
 
+      - name: Start MySQL container
+        uses: mirromutth/mysql-action@v1.1
+        with:
+          host port: 3306
+          container port: 3306
+          mysql database: 'testdb'
+          mysql root password: 1234
+
       - name: Build with Gradle
         run: |
           chmod +x ./gradlew

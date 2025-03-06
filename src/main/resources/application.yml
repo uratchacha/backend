@@ -17,7 +17,7 @@ spring:
       on-profile: common
 
   datasource:
-    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/${DB_NAME:lachacha}?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+    url: ${DATASOURCE_URL:jdbc:h2:mem:testdb}
     username: ${DB_USERNAME:root}
     password: ${DB_PASSWORD:root}
     driver-class-name: com.mysql.cj.jdbc.Driver
