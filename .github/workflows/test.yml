@@ -8,17 +8,6 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    services:
-      mysql:
-        image: mysql:8.0
-        env:
-          MYSQL_ROOT_PASSWORD: root
-          MYSQL_DATABASE: testdb
-          MYSQL_PASSWORD: 1234
-        ports:
-          - 3306:3306
-        options: --health-cmd="mysqladmin ping --host=mysql --user=root --password=1234" --health-interval=10s --health-timeout=5s --health-retries=5
-
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
@@ -28,6 +17,14 @@ jobs:
         with:
           distribution: 'zulu'
           java-version: '17'
+
+      - name: Start MySQL container
+        uses: mirromutth/mysql-action@v1.1
+        with:
+          host port: 3306
+          container port: 3306
+          mysql database: 'testdb'
+          mysql root password: 1234
 
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
@@ -43,4 +40,3 @@ jobs:
           SPRING_PROFILES_ACTIVE: test
           JWT_ISSUER: ${{ secrets.JWT_ISSUER }}
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
-          TEST_DATASOURCE_URL: jdbc:mysql://mysql:3306/testdb
