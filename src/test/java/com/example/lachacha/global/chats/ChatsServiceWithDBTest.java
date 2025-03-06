@@ -47,7 +47,7 @@ public class ChatsServiceWithDBTest
 
 
         usersService = new UsersService(usersRepository);
-        chatsService = new ChatsService(notificationHandler,chatRoomRepository,usersService);
+        chatsService = new ChatsService(notificationHandler,null,chatRoomRepository,usersService);
 
 
     }

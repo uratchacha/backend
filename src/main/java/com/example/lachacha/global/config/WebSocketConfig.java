@@ -1,6 +1,7 @@
 package com.example.lachacha.global.config;
 
 import com.example.lachacha.global.webSocket.chats.ChatHandler;
+import com.example.lachacha.global.webSocket.chats.ChatHandshakeInterceptor;
 import com.example.lachacha.global.webSocket.notifications.NotificationHandler;
 import com.example.lachacha.global.webSocket.notifications.NotificationHandshakeInterceptor;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -17,12 +18,14 @@ public class WebSocketConfig implements WebSocketConfigurer {
 
 
     private final NotificationHandshakeInterceptor notificationHandshakeInterceptor;
+    private final ChatHandshakeInterceptor chatHandshakeInterceptor;
     private final ObjectMapper objectMapper;
 
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-        registry.addHandler(new ChatHandler(objectMapper), "/chats")
-                .setAllowedOrigins("*");
+        registry.addHandler(new ChatHandler(), "/chats")
+                .setAllowedOrigins("*")
+                .addInterceptors(chatHandshakeInterceptor);
 
 
         registry.addHandler(new NotificationHandler(), "/notifications")
