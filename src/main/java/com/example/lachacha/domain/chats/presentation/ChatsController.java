@@ -6,11 +6,13 @@ import com.example.lachacha.domain.chats.dto.request.ExitChatRoomRequestDto;
 import com.example.lachacha.domain.chats.dto.request.GroupChatsRequestDto;
 import com.example.lachacha.domain.chats.dto.request.JoinGroupRequestDto;
 import com.example.lachacha.domain.chats.dto.request.PrivateChatsRequestDto;
+import com.example.lachacha.domain.chats.dto.response.ChatRoomResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 
 
 @RestController
@@ -56,16 +58,38 @@ public class ChatsController
     }
 
     @PostMapping("/group-chatroom/create")
-    public ResponseEntity<Long> createGroupChat(@RequestBody GroupChatsRequestDto groupChatsRequestDto)
+    public ResponseEntity<ChatRoomResponseDto> createGroupChat(@RequestBody GroupChatsRequestDto groupChatsRequestDto)
     {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(chatsService.createGroupChat(groupChatsRequestDto));
     }
 
     @PostMapping("/group-chatroom/join")
-    public ResponseEntity<Long> joinGroupChat(@RequestBody JoinGroupRequestDto joinGroupRequestDto)
+    public ResponseEntity<ChatRoomResponseDto> joinGroupChat(@RequestBody JoinGroupRequestDto joinGroupRequestDto)
     {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(chatsService.joinGroupChat(joinGroupRequestDto));
+    }
+
+    @GetMapping("/{chatRoomId}")
+    public ResponseEntity<ChatRoomResponseDto> getChatRoomById(@PathVariable Long chatRoomId)
+    {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(chatsService.findChatRoomById(chatRoomId));
+    }
+
+    @GetMapping("/group-chatroom")
+    public ResponseEntity<List<ChatRoomResponseDto>> getAllGroupChatRoom()
+    {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(chatsService.findAllGroupChatRoom());
+    }
+
+    @GetMapping("/private-chatroom")
+    public ResponseEntity<List<ChatRoomResponseDto>> getAllPrivateChatRoom()
+    {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(chatsService.findAllPrivateChatRoom());
+
     }
 }

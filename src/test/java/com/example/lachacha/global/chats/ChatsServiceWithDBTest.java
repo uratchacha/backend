@@ -123,14 +123,14 @@ public class ChatsServiceWithDBTest
 
     @Test
     @Order(2)
-    void creatAndjJoinGroupChatTest() throws Exception
+    void creatAndJoinGroupChatTest() throws Exception
     {
         GroupChatsRequestDto groupChatsRequestDto = GroupChatsRequestDto.builder()
                 .maxSize(3)
                 .userId(1L)
                 .build();
 
-        ChatRoom chatRoom =chatRoomRepository.findById(chatsService.createGroupChat(groupChatsRequestDto)).orElse(null);
+        ChatRoom chatRoom =chatRoomRepository.findById(chatsService.createGroupChat(groupChatsRequestDto).id()).orElse(null);
         JoinGroupRequestDto joinGroupRequestDto = JoinGroupRequestDto.builder()
                 .chatRoomId(chatRoom.getId())
                 .userId(2L)
@@ -150,8 +150,8 @@ public class ChatsServiceWithDBTest
         // 알림 보내기 검증
         Mockito.verify(notificationHandler).sendNotification(Mockito.eq(3L), messageCaptor.capture());
         Mockito.verify(notificationHandler).sendNotification(Mockito.eq(2L), messageCaptor.capture());
-        Mockito.verify(notificationHandler).sendNotification(Mockito.eq(1L), messageCaptor.capture());
-
+        Mockito.verify(notificationHandler, Mockito.times(2))
+                .sendNotification(Mockito.eq(1L), messageCaptor.capture());
         // 메시지 출력 (디버깅용)
         System.out.println(messageCaptor.getAllValues());
 

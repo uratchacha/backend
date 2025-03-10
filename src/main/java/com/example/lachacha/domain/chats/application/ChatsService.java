@@ -9,6 +9,7 @@ import com.example.lachacha.domain.chats.dto.request.ExitChatRoomRequestDto;
 import com.example.lachacha.domain.chats.dto.request.GroupChatsRequestDto;
 import com.example.lachacha.domain.chats.dto.request.JoinGroupRequestDto;
 import com.example.lachacha.domain.chats.dto.request.PrivateChatsRequestDto;
+import com.example.lachacha.domain.chats.dto.response.ChatRoomResponseDto;
 import com.example.lachacha.domain.chats.exception.ChatsException;
 import com.example.lachacha.domain.user.application.UsersService;
 import com.example.lachacha.domain.user.domain.Users;
@@ -23,8 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -142,11 +142,19 @@ public class ChatsService
         Map<String, Object> notificationData = new HashMap<>();
         notificationData.put("message", messageBody);
 
-        if(chatRoomId!=null) {
+
+        if(Objects.equals(messageBody, "멤버가 추가되었습니다."))
+        {
+            notificationData.put("messageType", "update");
+        }
+        else if(Objects.equals(messageBody, "정원이 모집되어 채팅방이 개설되었습니다."))
+        {
+            notificationData.put("messageType", "notification");
+        }
+        else if(chatRoomId!=null) {
             notificationData.put("chatRoomId", chatRoomId);
             notificationData.put("messageType", "accept");
         }
-
         else
             notificationData.put("messageType", "reject");
 
@@ -171,7 +179,7 @@ public class ChatsService
     }
 
     @Transactional
-    public Long createGroupChat(GroupChatsRequestDto groupChatsRequestDto)
+    public ChatRoomResponseDto createGroupChat(GroupChatsRequestDto groupChatsRequestDto)
     {
         GroupChatRoom groupChatRoom = GroupChatRoom.builder().maxSize(groupChatsRequestDto.maxSize()).build();
         Users requestUser = userService.findUsersById(groupChatsRequestDto.userId());
@@ -181,11 +189,11 @@ public class ChatsService
 
         chatRoomRepository.save(groupChatRoom);
 
-        return groupChatRoom.getId();
+        return ChatRoomResponseDto.from(groupChatRoom);
     }
 
     @Transactional
-    public Long joinGroupChat(JoinGroupRequestDto joinGroupRequestDto)
+    public ChatRoomResponseDto joinGroupChat(JoinGroupRequestDto joinGroupRequestDto)
     {
         GroupChatRoom groupChatRoom= (GroupChatRoom)
                 chatRoomRepository.findById(joinGroupRequestDto.chatRoomId()).orElseThrow();
@@ -201,14 +209,19 @@ public class ChatsService
             chatRoomLock.unlock();
         }
 
+        String messageBody;
         if(groupChatRoom.getMaxSize()==groupChatRoom.getMembers().size())
+            messageBody="정원이 모집되어 채팅방이 개설되었습니다.";
+        else
+            messageBody="멤버가 추가되었습니다.";
+        for(Users user :groupChatRoom.getMembers())
         {
-            for(Users user :groupChatRoom.getMembers())
-            {
-                sendChatNotification(user.getId(),"정원이 모집되어 채팅방이 개설되었습니다.",groupChatRoom.getId());
-            }
+            if(Objects.equals(requestUser.getId(), user.getId())&&messageBody.equals("멤버가 추가되었습니다."))
+                continue;
+            sendChatNotification(user.getId(),messageBody,groupChatRoom.getId());
         }
-        return groupChatRoom.getId();
+
+        return ChatRoomResponseDto.from(groupChatRoom);
     }
 
     @Transactional
@@ -223,4 +236,32 @@ public class ChatsService
             chatRoomRepository.delete(chatroom);
         }
     }
+
+
+    public ChatRoomResponseDto findChatRoomById(Long chatRoomId) {
+        ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId)
+                .orElseThrow(() -> new ChatsException(MyErrorCode.CHATROOM_NOT_FOUND));
+        return ChatRoomResponseDto.from(chatRoom);
+    }
+
+    public List<ChatRoomResponseDto> findAllGroupChatRoom()
+    {
+        List<ChatRoomResponseDto> groupChatRoom=new ArrayList<>();
+        chatRoomRepository.findAll().forEach(chatRoom -> {
+            if(chatRoom.getMembers().size()>2)
+                groupChatRoom.add(ChatRoomResponseDto.from(chatRoom));
+        });
+        return groupChatRoom;
+    }
+
+    public List<ChatRoomResponseDto> findAllPrivateChatRoom()
+    {
+        List<ChatRoomResponseDto> groupChatRoom=new ArrayList<>();
+        chatRoomRepository.findAll().forEach(chatRoom -> {
+            if(chatRoom.getMembers().size()==2)
+                groupChatRoom.add(ChatRoomResponseDto.from(chatRoom));
+        });
+        return groupChatRoom;
+    }
+
 }
