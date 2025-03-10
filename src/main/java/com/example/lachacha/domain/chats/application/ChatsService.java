@@ -5,6 +5,7 @@ import com.example.lachacha.domain.chats.domain.ChatRoomRepository;
 import com.example.lachacha.domain.chats.domain.GroupChatRoom;
 import com.example.lachacha.domain.chats.domain.PrivateChatRoom;
 import com.example.lachacha.domain.chats.dto.ChatsMessageDto;
+import com.example.lachacha.domain.chats.dto.request.ExitChatRoomRequestDto;
 import com.example.lachacha.domain.chats.dto.request.GroupChatsRequestDto;
 import com.example.lachacha.domain.chats.dto.request.JoinGroupRequestDto;
 import com.example.lachacha.domain.chats.dto.request.PrivateChatsRequestDto;
@@ -24,7 +25,6 @@ import java.io.IOException;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -48,7 +48,7 @@ public class ChatsService
     }
 
     private Lock getChatRoomLock(Long chatRoomId) {
-        return userLockMap.computeIfAbsent(chatRoomId, k -> new ReentrantLock());
+        return chatRoomLockMap.computeIfAbsent(chatRoomId, k -> new ReentrantLock());
     }
 
 
@@ -118,7 +118,7 @@ public class ChatsService
         }
 
         // 채팅 승인 알림 전송
-        sendChatNotification(requester.getId(), "채팅이 승인되었습니다.",privateChatRoom.getId());
+        sendChatNotification(requester.getId(), "매칭요청이 수락되었습니다.",privateChatRoom.getId());
         return privateChatRoom.getId();
     }
 
@@ -199,6 +199,25 @@ public class ChatsService
             chatRoomLock.unlock();
         }
 
+        if(groupChatRoom.getMaxSize()==groupChatRoom.getMembers().size())
+        {
+            for(Users user :groupChatRoom.getMembers())
+            {
+                sendChatNotification(user.getId(),"정원이 모집되어 채팅방이 개설되었습니다.",groupChatRoom.getId());
+            }
+        }
         return groupChatRoom.getId();
+    }
+
+    public void exitChatRoom(ExitChatRoomRequestDto exitChatRoomRequestDto)
+    {
+        Users requestUser = userService.findUsersById(exitChatRoomRequestDto.userId());
+        ChatRoom chatroom = chatRoomRepository.findById(exitChatRoomRequestDto.chatRoomId()).orElseThrow();
+
+        chatroom.removeMember(requestUser);
+
+        if(chatroom.getMembers().isEmpty()) {
+            chatRoomRepository.delete(chatroom);
+        }
     }
 }

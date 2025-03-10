@@ -1,9 +1,12 @@
 package com.example.lachacha.global.chats;
 
 import com.example.lachacha.domain.chats.application.ChatsService;
+import com.example.lachacha.domain.chats.domain.ChatRoom;
 import com.example.lachacha.domain.chats.domain.ChatRoomRepository;
 import com.example.lachacha.domain.chats.domain.PrivateChatRoom;
 import com.example.lachacha.domain.chats.dto.ChatsMessageDto;
+import com.example.lachacha.domain.chats.dto.request.GroupChatsRequestDto;
+import com.example.lachacha.domain.chats.dto.request.JoinGroupRequestDto;
 import com.example.lachacha.domain.chats.dto.request.PrivateChatsRequestDto;
 import com.example.lachacha.domain.user.application.UsersService;
 import com.example.lachacha.domain.user.domain.Users;
@@ -28,7 +31,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 @DataJpaTest
 @ActiveProfiles("test")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 public class ChatsServiceWithDBTest
 {
@@ -44,10 +47,12 @@ public class ChatsServiceWithDBTest
     private ChatsService chatsService;
     private Users user1;
     private Users user2;
+    private Users user3;
+    private Users user4;
 
     private UsersService usersService;
 
-    @BeforeEach
+    @BeforeAll
     void setUp() {
 
 
@@ -55,12 +60,19 @@ public class ChatsServiceWithDBTest
         chatsService = new ChatsService(notificationHandler,chatHandler,chatRoomRepository,usersService);
         user1 = Users.builder().username("User1").password("54545").build();
         user2 = Users.builder().username("User2").password("1335").build();
-
+        user3 = Users.builder().username("User3").password("1335d").build();
+        user4 = Users.builder().username("User4").password("1335a").build();
         usersRepository.save(user1);
         usersRepository.save(user2);
-
+        usersRepository.save(user3);
+        usersRepository.save(user4);
     }
 
+    @BeforeEach
+    void init()
+    {
+        Mockito.reset(notificationHandler, chatHandler);
+    }
     @Test
     @Order(0)
     void acceptChatRoomTest() throws IOException {
@@ -69,7 +81,6 @@ public class ChatsServiceWithDBTest
         List<Users> users = usersRepository.findAll();
         System.out.println(users.get(1).getId());
         PrivateChatsRequestDto chatsRequestDto = new PrivateChatsRequestDto(1L, 2L);
-
 
         // 채팅방 생성 메서드 호출
         chatsService.acceptChatRoom(chatsRequestDto);
@@ -111,6 +122,50 @@ public class ChatsServiceWithDBTest
     }
 
     @Test
+    @Order(2)
+    void creatAndjJoinGroupChatTest() throws Exception
+    {
+        GroupChatsRequestDto groupChatsRequestDto = GroupChatsRequestDto.builder()
+                .maxSize(3)
+                .userId(1L)
+                .build();
+
+        ChatRoom chatRoom =chatRoomRepository.findById(chatsService.createGroupChat(groupChatsRequestDto)).orElse(null);
+        JoinGroupRequestDto joinGroupRequestDto = JoinGroupRequestDto.builder()
+                .chatRoomId(chatRoom.getId())
+                .userId(2L)
+                .build();
+        JoinGroupRequestDto joinGroupRequestDto2 = JoinGroupRequestDto.builder()
+                .chatRoomId(chatRoom.getId())
+                .userId(3L)
+                .build();
+
+        // 그룹 채팅에 사용자 추가
+        chatsService.joinGroupChat(joinGroupRequestDto);
+        chatsService.joinGroupChat(joinGroupRequestDto2);
+
+        // 알림 메시지 캡처를 위한 ArgumentCaptor 설정
+        ArgumentCaptor<String> messageCaptor = ArgumentCaptor.forClass(String.class);
+
+        // 알림 보내기 검증
+        Mockito.verify(notificationHandler).sendNotification(Mockito.eq(3L), messageCaptor.capture());
+        Mockito.verify(notificationHandler).sendNotification(Mockito.eq(2L), messageCaptor.capture());
+        Mockito.verify(notificationHandler).sendNotification(Mockito.eq(1L), messageCaptor.capture());
+
+        // 메시지 출력 (디버깅용)
+        System.out.println(messageCaptor.getAllValues());
+
+        // Assertions (검증)
+        assertThat(chatRoom).isNotNull(); // 채팅방이 null이 아니어야 한다.
+        assertThat(chatRoom.getMaxSize()).isEqualTo(3); // 최대 크기 확인
+        assertThat(chatRoom.getMembers().size()).isEqualTo(3); // 채팅방 멤버 수 확인
+
+        // 각 사용자에게 전송된 메시지 내용 검증
+    }
+
+    @Test
+    @Order(3)
+
     void rejectChatRoomTest() throws Exception {
 
         chatsService.rejectChatRoom(1L);
@@ -119,6 +174,9 @@ public class ChatsServiceWithDBTest
 
         System.out.println(messageCaptor.getValue());
 
+
+        Mockito.verify(notificationHandler, Mockito.times(1))
+                .sendNotification(Mockito.eq(1L), messageCaptor.capture());
         assertThat(messageCaptor).isNotNull();
     }
 }

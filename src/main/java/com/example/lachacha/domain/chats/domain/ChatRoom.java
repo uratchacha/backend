@@ -37,4 +37,8 @@ public abstract class ChatRoom
             throw new ChatsException(MyErrorCode.INVALID_INPUT);
         }
     }
+
+    public void removeMember(Users user) {
+        members.remove(user);
+    }
 }
