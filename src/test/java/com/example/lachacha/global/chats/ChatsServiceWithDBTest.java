@@ -179,4 +179,23 @@ public class ChatsServiceWithDBTest
                 .sendNotification(Mockito.eq(1L), messageCaptor.capture());
         assertThat(messageCaptor).isNotNull();
     }
+
+    @Test
+    @Order(4)
+    void sendMessageGroupChatRoom() throws Exception
+    {
+        ChatsMessageDto chatMessageDto = new ChatsMessageDto(
+                LocalDateTime.now(),
+                2L,
+                "안녕하세요! 채팅 테스트 메시지입니다.",
+                user1.getUsername()
+        );
+        chatsService.sendChatMessage(chatMessageDto);
+        ArgumentCaptor<String> messageCaptor = ArgumentCaptor.forClass(String.class);
+
+        // 알림 보내기 검증
+        Mockito.verify(chatHandler).handleTextMessage(Mockito.eq(chatMessageDto.chatRoomId()), messageCaptor.capture());
+        System.out.println(messageCaptor.getValue());
+    }
+
 }

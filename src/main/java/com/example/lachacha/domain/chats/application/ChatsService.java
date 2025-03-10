@@ -170,6 +170,7 @@ public class ChatsService
         return mapper.writeValueAsString(notificationData);
     }
 
+    @Transactional
     public Long createGroupChat(GroupChatsRequestDto groupChatsRequestDto)
     {
         GroupChatRoom groupChatRoom = GroupChatRoom.builder().maxSize(groupChatsRequestDto.maxSize()).build();
@@ -183,6 +184,7 @@ public class ChatsService
         return groupChatRoom.getId();
     }
 
+    @Transactional
     public Long joinGroupChat(JoinGroupRequestDto joinGroupRequestDto)
     {
         GroupChatRoom groupChatRoom= (GroupChatRoom)
@@ -209,6 +211,7 @@ public class ChatsService
         return groupChatRoom.getId();
     }
 
+    @Transactional
     public void exitChatRoom(ExitChatRoomRequestDto exitChatRoomRequestDto)
     {
         Users requestUser = userService.findUsersById(exitChatRoomRequestDto.userId());
