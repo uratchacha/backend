@@ -1,16 +1,16 @@
 package com.example.lachacha.domain.chats.domain;
 
-import com.example.lachacha.domain.user.domain.Users;
-import jakarta.persistence.*;
+import jakarta.persistence.DiscriminatorValue;
+import jakarta.persistence.Entity;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 @Entity
 @Getter
 @AllArgsConstructor
-@DiscriminatorValue("PRIVATE")
+@DiscriminatorValue("GROUP")
 @SuperBuilder
-public class PrivateChatRoom extends ChatRoom
+public class GroupChatRoom extends ChatRoom
 {
 
 }
