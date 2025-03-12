@@ -145,10 +145,12 @@ public class ChatsService
 
         if(Objects.equals(messageBody, "멤버가 추가되었습니다."))
         {
+            notificationData.put("chatRoomId", chatRoomId);
             notificationData.put("messageType", "update");
         }
         else if(Objects.equals(messageBody, "정원이 모집되어 채팅방이 개설되었습니다."))
         {
+            notificationData.put("chatRoomId", chatRoomId);
             notificationData.put("messageType", "notification");
         }
         else if(chatRoomId!=null) {

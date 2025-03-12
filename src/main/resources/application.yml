@@ -11,6 +11,14 @@ server:
 ---
 
 spring:
+  kafka:
+    bootstrap-servers: ${KafKa_URL:172.31.33.187}
+    consumer:
+      group-id: chat-group
+      auto-offset-reset: earliest
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
   config:
     activate:
       on-profile: common

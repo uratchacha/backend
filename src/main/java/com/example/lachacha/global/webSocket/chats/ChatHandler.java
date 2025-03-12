@@ -1,9 +1,7 @@
 package com.example.lachacha.global.webSocket.chats;
 
-import com.example.lachacha.domain.chats.dto.ChatsMessageDto;
-import com.example.lachacha.domain.chats.exception.ChatsException;
-import com.example.lachacha.global.exception.MyErrorCode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+
+import com.example.lachacha.global.kafka.ChatProducer;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -22,6 +20,7 @@ import java.util.Set;
 @Component
 public class ChatHandler extends TextWebSocketHandler
 {
+    private final ChatProducer chatProducer;
     private static final Map<Long, Set<WebSocketSession>> rooms = new HashMap<>();
 
 
@@ -34,12 +33,19 @@ public class ChatHandler extends TextWebSocketHandler
 
 
     public void handleTextMessage(Long chatRoomId, String message) throws Exception {
-        Set<WebSocketSession> sessions = rooms.get(chatRoomId);
-        if(sessions == null)
-            throw new ChatsException(MyErrorCode.SESSION_NOT_FOUND);
-        for (WebSocketSession session : sessions)
-            sendMessage(session, message);
 
+        log.info("사용자로부터 메시지 수신: {}", message);
+        chatProducer.sendMessage(chatRoomId, message);
+
+    }
+
+    public void broadcastMessage(Long chatRoomId, String message) throws IOException {
+        Set<WebSocketSession> sessions = rooms.get(chatRoomId);
+        if (sessions == null) return;
+
+        for (WebSocketSession session : sessions) {
+            sendMessage(session, message);
+        }
     }
 
     public void sendMessage(WebSocketSession session, String message) throws IOException {
