@@ -19,11 +19,10 @@ public class WebSocketConfig implements WebSocketConfigurer {
 
     private final NotificationHandshakeInterceptor notificationHandshakeInterceptor;
     private final ChatHandshakeInterceptor chatHandshakeInterceptor;
-    private final ObjectMapper objectMapper;
-
+    private final ChatHandler chatHandler;
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-        registry.addHandler(new ChatHandler(), "/chats")
+        registry.addHandler(chatHandler, "/chats")
                 .setAllowedOrigins("*")
                 .addInterceptors(chatHandshakeInterceptor);
 
