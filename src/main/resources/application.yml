@@ -12,7 +12,7 @@ server:
 
 spring:
   kafka:
-    bootstrap-servers: ${KafKa_URL:172.31.33.187}
+    bootstrap-servers: ${KafKa_URL:172.31.33.187:9092}
     consumer:
       group-id: chat-group
       auto-offset-reset: earliest
