@@ -39,6 +39,9 @@ jwt:
   issuer: ${JWT_ISSUER}
   secret: ${JWT_SECRET}
 
+#네트워킹 시간
+networking:
+  duration: 30m
 ---
 
 spring:
