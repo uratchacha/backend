@@ -78,7 +78,7 @@ public class SecurityConfig {
 @Bean
 public CorsConfigurationSource corsConfigurationSource() {
     CorsConfiguration configuration = new CorsConfiguration();
-    configuration.setAllowedOriginPatterns(Arrays.asList("http://localhost:3000", "https://yourfrontend.com")); // 특정 도메인 허용
+    configuration.setAllowedOriginPatterns(Arrays.asList("http://localhost:3000", "https://quick-network.vercel.app")); // 특정 도메인 허용
     configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
     configuration.setAllowedHeaders(Arrays.asList("*"));
     configuration.setAllowCredentials(true); //  자격 증명 허용
