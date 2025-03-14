@@ -32,8 +32,7 @@ public class ChatHandler extends TextWebSocketHandler
     }
 
 
-    public void handleTextMessage(Long chatRoomId, String message) throws Exception {
-
+    public void handleTextMessage(Long chatRoomId, String message) {
         log.info("사용자로부터 메시지 수신: {}", message);
         chatProducer.sendMessage(chatRoomId, message);
 
