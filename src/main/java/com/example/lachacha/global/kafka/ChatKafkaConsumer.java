@@ -61,7 +61,7 @@ public class ChatKafkaConsumer {
                     log.error("메시지 처리 중 오류 발생", e);
                 }
             }
-        }, 0, 350, TimeUnit.MILLISECONDS); // 200ms마다 실행
+        }, 0, 500, TimeUnit.MILLISECONDS); // 200ms마다 실행
     }
 
     private String filterProfanity(String message) {
