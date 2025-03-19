@@ -4,10 +4,10 @@ import com.example.lachacha.domain.user.domain.Users;
 import com.example.lachacha.domain.user.domain.UsersRepository;
 import com.example.lachacha.domain.user.dto.request.UsersLoginRequest;
 import com.example.lachacha.domain.user.dto.request.UsersRequestDto;
-import com.example.lachacha.domain.user.dto.response.UsersResponseDto;
+import com.example.lachacha.domain.user.dto.response.MyPageResponseDto;
+import com.example.lachacha.domain.user.dto.response.UserProfileDto;
 import com.example.lachacha.domain.user.exception.UsersException;
 import com.example.lachacha.global.auth.application.AuthService;
-import com.example.lachacha.global.auth.domain.RefreshToken;
 import com.example.lachacha.global.auth.dto.TokenResponse;
 import com.example.lachacha.global.exception.MyErrorCode;
 import com.example.lachacha.global.exception.MyException;
@@ -15,6 +15,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -31,7 +34,7 @@ public class UsersService
     }
 
     @Transactional
-    public UsersResponseDto create(UsersRequestDto usersRequestDto)
+    public void create(UsersRequestDto usersRequestDto)
     {
         if(usersRepository.existsByUsername(usersRequestDto.username()))
         {
@@ -46,10 +49,11 @@ public class UsersService
                     .participationPurpose(usersRequestDto.participationPurpose())
                     .additionalNotificationMethods(usersRequestDto.additionalNotificationMethods())
                     .build();
+
         usersRepository.save(users);
-        return UsersResponseDto.of(users);
     }
 
+    @Transactional
     public TokenResponse login(UsersLoginRequest usersLoginRequest)
     {
         Users users=usersRepository.findByUsername(usersLoginRequest.username());
@@ -59,5 +63,37 @@ public class UsersService
         }
         return authService.usersLogin(users);
 
+    }
+
+    public Long countUsersByInterests()
+    {
+        Users users=authService.findUsersByAuth();
+        return usersRepository.countByInterestsContaining(users.getRoles());
+    }
+
+    public void updateIsParticipate()
+    {
+        Users users=authService.findUsersByAuth();
+        users.updateIsParticipate();
+    }
+
+    public void updateNotificationsEnabled()
+    {
+        Users users=authService.findUsersByAuth();
+        users.updateNotificationsEnabled();
+    }
+
+    public MyPageResponseDto myPage()
+    {
+        return MyPageResponseDto.of(authService.findUsersByAuth());
+    }
+
+    public List<UserProfileDto> getAllUsers()
+    {
+        List<Users> users=usersRepository.findAll();
+        List<UserProfileDto> userProfileDtos=new ArrayList<>();
+        for(Users user:users)
+            userProfileDtos.add(UserProfileDto.of(user));
+        return userProfileDtos;
     }
 }

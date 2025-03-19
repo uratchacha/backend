@@ -1,9 +1,9 @@
 package com.example.lachacha.domain.user.dto.response;
 
 import com.example.lachacha.domain.user.domain.Users;
-import jakarta.persistence.Column;
 
-public record UsersResponseDto(
+public record UserProfileDto(
+        Long id,
         String username,
         String password,
         boolean isParticipate,
@@ -14,8 +14,9 @@ public record UsersResponseDto(
         String participationPurpose,
         String additionalNotificationMethods
 ) {
-    public static UsersResponseDto of(Users user) {
-        return new UsersResponseDto(
+    public static UserProfileDto of(Users user) {
+        return new UserProfileDto(
+                user.getId(),
                 user.getUsername(),
                 user.getPassword(),
                 user.isParticipate(),

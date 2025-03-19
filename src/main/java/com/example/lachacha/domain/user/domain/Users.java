@@ -70,7 +70,16 @@ public class Users implements UserDetails
         return passwordEncoder.matches(inputPassword, this.password);
     }
 
-    public void setChatRoom(ChatRoom chatRoom) {
+    public void updateChatRoom(ChatRoom chatRoom) {
         this.chatRoom = chatRoom;
+    }
+
+    public void updateIsParticipate()
+    {
+        this.isParticipate=!isParticipate;
+    }
+    public void updateNotificationsEnabled()
+    {
+        this.notificationsEnabled=!notificationsEnabled;
     }
 }

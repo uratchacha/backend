@@ -100,17 +100,17 @@ public class ChatsService
                 chatRoomRepository.save(privateChatRoom);
 
                 if (requester.getId() < receiver.getId()) {
-                    receiver.setChatRoom(privateChatRoom);
+                    receiver.updateChatRoom(privateChatRoom);
                 } else {
-                    requester.setChatRoom(privateChatRoom);
+                    requester.updateChatRoom(privateChatRoom);
                 }
             } finally {
                 secondLock.unlock();
             }
             if (requester.getId() < receiver.getId()) {
-                requester.setChatRoom(privateChatRoom);
+                requester.updateChatRoom(privateChatRoom);
             } else {
-                receiver.setChatRoom(privateChatRoom);
+                receiver.updateChatRoom(privateChatRoom);
             }
 
         } finally {
@@ -187,7 +187,7 @@ public class ChatsService
         Users requestUser = userService.findUsersById(groupChatsRequestDto.userId());
 
         groupChatRoom.addMember(requestUser);
-        requestUser.setChatRoom(groupChatRoom);
+        requestUser.updateChatRoom(groupChatRoom);
 
         chatRoomRepository.save(groupChatRoom);
 
@@ -206,7 +206,7 @@ public class ChatsService
         chatRoomLock.lock();
         try {
             groupChatRoom.addMember(requestUser);
-            requestUser.setChatRoom(groupChatRoom);
+            requestUser.updateChatRoom(groupChatRoom);
         } finally {
             chatRoomLock.unlock();
         }
