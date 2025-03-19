@@ -62,7 +62,7 @@ public class ChatKafkaConsumer {
                     log.error("메시지 처리 중 오류 발생", e);
                 }
             }
-        }, 0, 850, TimeUnit.MILLISECONDS);
+        }, 0, 500, TimeUnit.MILLISECONDS);
     }
 
     private static final Pattern PROFANITY_PATTERN = Pattern.compile("시발|개새끼|병신");
