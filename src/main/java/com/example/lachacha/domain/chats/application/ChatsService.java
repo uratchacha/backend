@@ -233,7 +233,9 @@ public class ChatsService
         ChatRoom chatroom = chatRoomRepository.findById(exitChatRoomRequestDto.chatRoomId()).orElseThrow();
 
         chatroom.removeMember(requestUser);
+        requestUser.updateChatRoom(null);
 
+        chatHandler.exitRoom(exitChatRoomRequestDto.chatRoomId(),exitChatRoomRequestDto.userId());
         if(chatroom.getMembers().isEmpty()) {
             chatRoomRepository.delete(chatroom);
         }
