@@ -5,7 +5,6 @@ import lombok.Builder;
 @Builder
 public record GroupChatsRequestDto
         (
-                Long userId,
                 int maxSize
         )
 {

@@ -5,7 +5,6 @@ import lombok.Builder;
 
 @Builder
 public record ExitChatRoomRequestDto(
-        Long userId,
         Long chatRoomId
 ) {
 }

@@ -13,6 +13,7 @@ import com.example.lachacha.domain.chats.dto.response.ChatRoomResponseDto;
 import com.example.lachacha.domain.chats.exception.ChatsException;
 import com.example.lachacha.domain.user.application.UsersService;
 import com.example.lachacha.domain.user.domain.Users;
+import com.example.lachacha.global.auth.application.AuthService;
 import com.example.lachacha.global.exception.MyErrorCode;
 import com.example.lachacha.global.webSocket.chats.ChatHandler;
 import com.example.lachacha.global.webSocket.notifications.NotificationHandler;
@@ -38,6 +39,7 @@ public class ChatsService
     private final ChatRoomRepository chatRoomRepository;
     private final UsersService userService;
     private final ObjectMapper mapper=new ObjectMapper();
+    private final AuthService authService;
 
     private final Map<Long, Lock> userLockMap = new HashMap<>();
     private final Map<Long, Lock> chatRoomLockMap = new HashMap<>();
@@ -52,10 +54,11 @@ public class ChatsService
     }
 
 
-    public void requestChatRoom(Long requesterId, Long receiverId)
+    public void requestChatRoom(Long receiverId)
     {
         try {
-            String notificationMessage = createRequestNotificationJson(requesterId,receiverId);
+            Users users=authService.findUsersByAuth();
+            String notificationMessage = createRequestNotificationJson(users.getId(),receiverId);
             notificationHandler.sendNotification(receiverId, notificationMessage);
         } catch (IOException e) {
             throw new ChatsException(MyErrorCode.NOTIFICATION_ERROR);
@@ -183,11 +186,11 @@ public class ChatsService
     @Transactional
     public ChatRoomResponseDto createGroupChat(GroupChatsRequestDto groupChatsRequestDto)
     {
+        Users users=authService.findUsersByAuth();
         GroupChatRoom groupChatRoom = GroupChatRoom.builder().maxSize(groupChatsRequestDto.maxSize()).build();
-        Users requestUser = userService.findUsersById(groupChatsRequestDto.userId());
 
-        groupChatRoom.addMember(requestUser);
-        requestUser.updateChatRoom(groupChatRoom);
+        groupChatRoom.addMember(users);
+        users.updateChatRoom(groupChatRoom);
 
         chatRoomRepository.save(groupChatRoom);
 
@@ -197,16 +200,16 @@ public class ChatsService
     @Transactional
     public ChatRoomResponseDto joinGroupChat(JoinGroupRequestDto joinGroupRequestDto)
     {
+        Users users=authService.findUsersByAuth();
         GroupChatRoom groupChatRoom= (GroupChatRoom)
                 chatRoomRepository.findById(joinGroupRequestDto.chatRoomId()).orElseThrow();
-        Users requestUser = userService.findUsersById(joinGroupRequestDto.userId());
         Lock chatRoomLock = getChatRoomLock(joinGroupRequestDto.chatRoomId());
 
 
         chatRoomLock.lock();
         try {
-            groupChatRoom.addMember(requestUser);
-            requestUser.updateChatRoom(groupChatRoom);
+            groupChatRoom.addMember(users);
+            users.updateChatRoom(groupChatRoom);
         } finally {
             chatRoomLock.unlock();
         }
@@ -218,7 +221,7 @@ public class ChatsService
             messageBody="멤버가 추가되었습니다.";
         for(Users user :groupChatRoom.getMembers())
         {
-            if(Objects.equals(requestUser.getId(), user.getId())&&messageBody.equals("멤버가 추가되었습니다."))
+            if(Objects.equals(users.getId(), user.getId())&&messageBody.equals("멤버가 추가되었습니다."))
                 continue;
             sendChatNotification(user.getId(),messageBody,groupChatRoom.getId());
         }
@@ -229,13 +232,13 @@ public class ChatsService
     @Transactional
     public void exitChatRoom(ExitChatRoomRequestDto exitChatRoomRequestDto)
     {
-        Users requestUser = userService.findUsersById(exitChatRoomRequestDto.userId());
+        Users users=authService.findUsersByAuth();
         ChatRoom chatroom = chatRoomRepository.findById(exitChatRoomRequestDto.chatRoomId()).orElseThrow();
 
-        chatroom.removeMember(requestUser);
-        requestUser.updateChatRoom(null);
+        chatroom.removeMember(users);
+        users.updateChatRoom(null);
 
-        chatHandler.exitRoom(exitChatRoomRequestDto.chatRoomId(),exitChatRoomRequestDto.userId());
+        chatHandler.exitRoom(exitChatRoomRequestDto.chatRoomId(),users.getId());
         if(chatroom.getMembers().isEmpty()) {
             chatRoomRepository.delete(chatroom);
         }

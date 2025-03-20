@@ -1,8 +1,6 @@
 package com.example.lachacha.domain.user.domain;
 
 import com.example.lachacha.domain.chats.domain.ChatRoom;
-import com.example.lachacha.global.exception.MyErrorCode;
-import com.example.lachacha.global.exception.MyException;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

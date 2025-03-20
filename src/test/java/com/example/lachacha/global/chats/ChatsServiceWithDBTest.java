@@ -11,6 +11,7 @@ import com.example.lachacha.domain.chats.dto.request.PrivateChatsRequestDto;
 import com.example.lachacha.domain.user.application.UsersService;
 import com.example.lachacha.domain.user.domain.Users;
 import com.example.lachacha.domain.user.domain.UsersRepository;
+import com.example.lachacha.global.auth.application.AuthService;
 import com.example.lachacha.global.webSocket.chats.ChatHandler;
 import com.example.lachacha.global.webSocket.notifications.NotificationHandler;
 import org.junit.jupiter.api.*;
@@ -20,7 +21,9 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -44,6 +47,9 @@ public class ChatsServiceWithDBTest
     @Autowired
     private UsersRepository usersRepository;
 
+    @Mock
+    private AuthService authService;
+
     private ChatsService chatsService;
     private Users user1;
     private Users user2;
@@ -55,9 +61,8 @@ public class ChatsServiceWithDBTest
     @BeforeAll
     void setUp() {
 
-
         usersService = new UsersService(usersRepository,null,null);
-        chatsService = new ChatsService(notificationHandler,chatHandler,chatRoomRepository,usersService);
+        chatsService = new ChatsService(notificationHandler,chatHandler,chatRoomRepository,usersService,authService);
         user1 = Users.builder().username("User1").password("54545")
                 .roles("sd").additionalNotificationMethods("sd").interests("sd")
                 .introduction("sd").participationPurpose("sd")
@@ -88,10 +93,7 @@ public class ChatsServiceWithDBTest
     @Test
     @Order(0)
     void acceptChatRoomTest() throws IOException {
-        // 채팅방 요청 DTO 생성
-        //setUser();
-        List<Users> users = usersRepository.findAll();
-        System.out.println(users.get(1).getId());
+
         PrivateChatsRequestDto chatsRequestDto = new PrivateChatsRequestDto(1L, 2L);
 
         // 채팅방 생성 메서드 호출
@@ -139,17 +141,19 @@ public class ChatsServiceWithDBTest
     {
         GroupChatsRequestDto groupChatsRequestDto = GroupChatsRequestDto.builder()
                 .maxSize(3)
-                .userId(1L)
                 .build();
+        Mockito.when(authService.findUsersByAuth())
+                .thenReturn(user1) // 첫 번째 호출 -> user1
+                .thenReturn(user2) // 두 번째 호출 -> user2
+                .thenReturn(user3); // 세 번째 호출 -> user3
 
         ChatRoom chatRoom =chatRoomRepository.findById(chatsService.createGroupChat(groupChatsRequestDto).id()).orElse(null);
+        assert chatRoom != null;
         JoinGroupRequestDto joinGroupRequestDto = JoinGroupRequestDto.builder()
                 .chatRoomId(chatRoom.getId())
-                .userId(2L)
                 .build();
         JoinGroupRequestDto joinGroupRequestDto2 = JoinGroupRequestDto.builder()
                 .chatRoomId(chatRoom.getId())
-                .userId(3L)
                 .build();
 
         // 그룹 채팅에 사용자 추가
