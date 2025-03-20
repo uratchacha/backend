@@ -16,7 +16,8 @@ public record UserProfileDto(
         String jobValue,
         String interests,
         String participationPurpose,
-        String additionalNotificationMethods
+        String additionalNotificationMethods,
+        String nickName
 ) {
     public static UserProfileDto of(Users user) {
         return new UserProfileDto(
@@ -33,7 +34,8 @@ public record UserProfileDto(
                 user.getJobValue(),
                 user.getInterests(),
                 user.getParticipationPurpose(),
-                user.getAdditionalNotificationMethods()
+                user.getAdditionalNotificationMethods(),
+                user.getNickName()
         );
     }
 }
