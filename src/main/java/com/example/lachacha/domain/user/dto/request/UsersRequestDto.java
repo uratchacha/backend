@@ -8,18 +8,30 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 public record UsersRequestDto(
          String username,
          String password,
-         String introduction,
-         String roles,
+         String affiliation,
+         String career,
+         String contactInfo,
+         String email,
+         String interestJobCategory,
+         String interestJobValue,
+         String jobCategory,
+         String jobValue,
          String interests,
          String participationPurpose,
          String additionalNotificationMethods
 ) {
-    public Users toEntity() {
+    public Users toEntity(BCryptPasswordEncoder bCryptPasswordEncoder) {
         return Users.builder()
                 .username(username)
-                .password(password)
-                .introduction(introduction)
-                .roles(roles)
+                .password(bCryptPasswordEncoder.encode(password))
+                .affiliation(affiliation)
+                .career(career)
+                .contactInfo(contactInfo)
+                .email(email)
+                .interestJobCategory(interestJobCategory)
+                .interestJobValue(interestJobValue)
+                .jobCategory(jobCategory)
+                .jobValue(jobValue)
                 .interests(interests)
                 .participationPurpose(participationPurpose)
                 .additionalNotificationMethods(additionalNotificationMethods)

@@ -40,16 +40,9 @@ public class UsersService
         {
             throw new UsersException(MyErrorCode.NOTIFICATION_ERROR);
         }
-        Users users=Users.builder()
-                    .username(usersRequestDto.username())
-                    .password(bCryptPasswordEncoder.encode(usersRequestDto.password()))
-                    .introduction(usersRequestDto.introduction())
-                    .roles(usersRequestDto.roles())
-                    .interests(usersRequestDto.interests())
-                    .participationPurpose(usersRequestDto.participationPurpose())
-                    .additionalNotificationMethods(usersRequestDto.additionalNotificationMethods())
-                    .build();
-
+        Users users= usersRequestDto.toEntity(bCryptPasswordEncoder);
+        long number= usersRepository.countByJobCategory(users.getJobCategory());
+        users.makeNickName(number);
         usersRepository.save(users);
     }
 
@@ -68,7 +61,7 @@ public class UsersService
     public Long countUsersByInterests()
     {
         Users users=authService.findUsersByAuth();
-        return usersRepository.countByInterestsContaining(users.getRoles());
+        return usersRepository.countByInterestsContaining(users.getJobCategory(),users.getJobValue());
     }
 
     public void updateIsParticipate()
