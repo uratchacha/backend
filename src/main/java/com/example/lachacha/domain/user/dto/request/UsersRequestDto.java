@@ -19,7 +19,8 @@ public record UsersRequestDto(
          String jobCategory,
          String jobValue,
          List<String> interests,
-         String participationPurpose
+         String participationPurpose,
+         String name
 ) {
     public Users toEntity(BCryptPasswordEncoder bCryptPasswordEncoder) {
         return Users.builder()
@@ -35,6 +36,7 @@ public record UsersRequestDto(
                 .jobValue(jobValue)
                 .interests(interests)
                 .participationPurpose(participationPurpose)
+                .name(name)
                 .build();
     }
 

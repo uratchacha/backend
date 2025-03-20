@@ -74,7 +74,6 @@ public class Users implements UserDetails
 
     private String participationPurpose;
 
-    private String additionalNotificationMethods;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "chat_room_id")

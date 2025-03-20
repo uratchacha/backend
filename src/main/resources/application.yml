@@ -35,6 +35,11 @@ spring:
     hibernate:
       ddl-auto: create
     show-sql: true
+  data:
+    redis:
+      host: ${REDIS_URL:172.31.33.187}
+      port: 6379
+      password: ${REDIS_PASSWORD}
 
 jwt:
   issuer: ${JWT_ISSUER}

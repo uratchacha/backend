@@ -17,7 +17,8 @@ public record MyPageResponseDto(
         String jobValue,
         List<String> interests,
         String participationPurpose,
-        String nickName
+        String nickName,
+        String name
 
 ) {
     public static MyPageResponseDto of(Users user) {
@@ -34,7 +35,8 @@ public record MyPageResponseDto(
                 user.getJobValue(),
                 user.getInterests(),
                 user.getParticipationPurpose(),
-                user.getNickName()
+                user.getNickName(),
+                user.getName()
         );
     }
 }
