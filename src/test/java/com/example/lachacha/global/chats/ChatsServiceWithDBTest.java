@@ -64,19 +64,19 @@ public class ChatsServiceWithDBTest
         usersService = new UsersService(usersRepository,null,null);
         chatsService = new ChatsService(notificationHandler,chatHandler,chatRoomRepository,usersService,authService);
         user1 = Users.builder().username("User1").password("54545")
-                .additionalNotificationMethods("sd").interests("sd")
+                .additionalNotificationMethods("sd")
                 .participationPurpose("sd")
                 .build();
         user2 = Users.builder().username("User2").password("1335")
-                .additionalNotificationMethods("sd").interests("sd")
+                .additionalNotificationMethods("sd")
                 .isParticipate(false).notificationsEnabled(false).participationPurpose("sd")
                 .build();
         user3 = Users.builder().username("User3").password("1335d")
-                .additionalNotificationMethods("sd").interests("sd")
+                .additionalNotificationMethods("sd")
                 .isParticipate(false).notificationsEnabled(false).participationPurpose("sd")
                 .build();
         user4 = Users.builder().username("User4").password("1335a")
-                .additionalNotificationMethods("sd").interests("sd")
+                .additionalNotificationMethods("sd")
                 .isParticipate(false).notificationsEnabled(false).participationPurpose("sd")
                 .build();
         usersRepository.save(user1);
