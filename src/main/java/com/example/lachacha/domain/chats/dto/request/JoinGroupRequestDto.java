@@ -4,7 +4,6 @@ import lombok.Builder;
 
 @Builder
 public record JoinGroupRequestDto(
-        Long userId,
         Long chatRoomId
 ) {
 }

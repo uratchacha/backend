@@ -15,7 +15,12 @@ public enum MyErrorCode {
     CHATROOM_NOT_FOUND("CHATROOM_NOT_FOUND", "채팅방을 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
     SESSION_NOT_FOUND("SESSION_NOT_FOUND", "채팅방에 소속된 세션이 아닙니다.", HttpStatus.NOT_FOUND),
     ALREADY_IN_CHAT("ALREADY_IN_CHAT","채팅방에 이미 소속되어 있습니다.",HttpStatus.BAD_REQUEST),
+    DUPLICATE_LOGIN_ID("DUPLICATE_LOGIN_ID","이미 존재하는 유저아이디입니다.",HttpStatus.BAD_REQUEST),
+    INVALID_REFRESH_TOKEN("INVALID_REFRESH_TOKEN","유효 하지 않은 토큰 값입니다.",HttpStatus.BAD_REQUEST),
+    REFRESH_TOKEN_NOT_FOUND("REFRESH_TOKEN_NOT_FOUND", "존재 하지 않은 리프레쉬 토큰입니다." , HttpStatus.NOT_FOUND),
+    PASSWORD_NOT_MATCH("PASSWORD_NOT_MATCH","비밀번호가 다릅니다", HttpStatus.BAD_REQUEST),
     GROUP_CHAT_FULL("GROUP_CHAT_FULL","채팅방에 인원이 다 찼습니다.",HttpStatus.BAD_REQUEST);
+
     private final String code;       // 예외 코드
     private final String message;    // 예외 메시지
     private final HttpStatus status; // HTTP 상태 코드

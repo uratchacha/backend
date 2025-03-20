@@ -4,6 +4,7 @@ package com.example.lachacha.global.chats;
 import com.example.lachacha.domain.chats.application.ChatsService;
 import com.example.lachacha.domain.user.application.UsersService;
 import com.example.lachacha.domain.user.domain.Users;
+import com.example.lachacha.global.auth.application.AuthService;
 import com.example.lachacha.global.auth.jwt.JwtProperties;
 import com.example.lachacha.global.auth.jwt.TokenProvider;
 import com.example.lachacha.global.webSocket.notifications.NotificationHandler;
@@ -32,6 +33,8 @@ public class ChatsServiceTest
     private NotificationHandler notificationHandler;
 
     @Mock
+    private AuthService authService;
+    @Mock
     private UsersService usersService;
     @InjectMocks
     private ChatsService chatsService;
@@ -50,9 +53,9 @@ public class ChatsServiceTest
 
         Users requesterUser = Users.builder().id(requesterId).username("sdssdsd").password("sdsdd").build();
         when(usersService.findUsersById(requesterId)).thenReturn(requesterUser);
+        when(authService.findUsersByAuth()).thenReturn(requesterUser);
 
-
-        chatsService.requestChatRoom(requesterId, receiverId);
+        chatsService.requestChatRoom(receiverId);
         ArgumentCaptor<String> messageCaptor = ArgumentCaptor.forClass(String.class);
         Mockito.verify(notificationHandler).sendNotification(Mockito.eq(receiverId), messageCaptor.capture());
 

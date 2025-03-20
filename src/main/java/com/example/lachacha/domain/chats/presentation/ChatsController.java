@@ -24,9 +24,9 @@ public class ChatsController
     private final ChatsService chatsService;
 
     @GetMapping("/private-chatroom/request")
-    public ResponseEntity<Void> requestChats(@RequestParam("requesterId") Long requesterId, @RequestParam("receiverId") Long receiverId)
+    public ResponseEntity<Void> requestChats( @RequestParam("receiverId") Long receiverId)
     {
-        chatsService.requestChatRoom(requesterId,receiverId);
+        chatsService.requestChatRoom(receiverId);
         return ResponseEntity.ok().build();
     }
 

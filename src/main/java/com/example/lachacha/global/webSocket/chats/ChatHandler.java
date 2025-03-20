@@ -15,6 +15,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+
 @Slf4j
 @RequiredArgsConstructor
 @Component
@@ -22,13 +24,18 @@ public class ChatHandler extends TextWebSocketHandler
 {
     private final ChatProducer chatProducer;
     private static final Map<Long, Set<WebSocketSession>> rooms = new HashMap<>();
+    private static final Map<Long, WebSocketSession> userSessions = new ConcurrentHashMap<>();
 
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) {
         Long chatRoomId = getChatRoomId(session);
+        Long userId= getUserId(session);
+
+        userSessions.put(userId, session);
         rooms.computeIfAbsent(chatRoomId, k -> new HashSet<>()).add(session);
         log.info("{} 연결됨", session.getId());
+        log.info("{} 유저 연결됨", userId);
     }
 
 
@@ -52,16 +59,32 @@ public class ChatHandler extends TextWebSocketHandler
             session.sendMessage(new TextMessage(message));
         }
     }
+    public void exitRoom(Long chatRoomId, Long userId)
+    {
+        WebSocketSession session = userSessions.get(userId);
+        if (session != null) {
+            Set<WebSocketSession> sessions = rooms.get(chatRoomId);
+            if (sessions != null) {
+                sessions.remove(session);
+            }
+        }
+        log.info("{} 유저가 채팅방에서 나갔습니다.", userId);
+    }
 
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status)  {
         Long chatRoomId = getChatRoomId(session);
+        Long userId= getUserId(session);
         rooms.get(chatRoomId).remove(session);
+        userSessions.remove(userId);
         log.info("{} 채팅방에서 나갔습니다.", chatRoomId);
     }
 
     private Long getChatRoomId(WebSocketSession session) {
         return Long.parseLong(session.getAttributes().get("chatRoomId").toString());
+    }
+    private Long getUserId(WebSocketSession session) {
+        return Long.parseLong(session.getAttributes().get("userId").toString());
     }
 
 }
