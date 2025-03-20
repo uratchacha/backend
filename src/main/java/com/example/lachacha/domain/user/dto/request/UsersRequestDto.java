@@ -4,6 +4,8 @@ import com.example.lachacha.domain.user.domain.Users;
 import lombok.Builder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+import java.util.List;
+
 @Builder
 public record UsersRequestDto(
          String username,
@@ -16,9 +18,8 @@ public record UsersRequestDto(
          String interestJobValue,
          String jobCategory,
          String jobValue,
-         String interests,
-         String participationPurpose,
-         String additionalNotificationMethods
+         List<String> interests,
+         String participationPurpose
 ) {
     public Users toEntity(BCryptPasswordEncoder bCryptPasswordEncoder) {
         return Users.builder()
@@ -34,7 +35,6 @@ public record UsersRequestDto(
                 .jobValue(jobValue)
                 .interests(interests)
                 .participationPurpose(participationPurpose)
-                .additionalNotificationMethods(additionalNotificationMethods)
                 .build();
     }
 

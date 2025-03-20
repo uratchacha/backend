@@ -12,8 +12,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 import static jakarta.persistence.GenerationType.IDENTITY;
 import static lombok.AccessLevel.PROTECTED;
@@ -62,7 +64,9 @@ public class Users implements UserDetails
 
     private String interestJobValue;
 
-    private String interests;
+    @ElementCollection
+    @Builder.Default
+    private List<String> interests=new ArrayList<>();
 
     private String jobCategory;
 
