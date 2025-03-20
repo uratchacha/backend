@@ -41,19 +41,35 @@ public class Users implements UserDetails
     @Column(nullable = false)
     private boolean notificationsEnabled=true;
 
-    @Column(nullable = false)
-    private String introduction;
+    @Column(length = 100)
+    private String name;
 
-    @Column(nullable = false)
-    private String roles;
+    @Column(unique = true, length = 100)
+    private String email; // 이메일
 
-    @Column(nullable = false)
+    @Column(length = 50)
+    private String affiliation;
+
+    @Column(length = 50)
+    private String nickName;
+
+    @Column(length = 100)
+    private String career; // 경력
+
+    private String contactInfo;
+
+    private String interestJobCategory;
+
+    private String interestJobValue;
+
     private String interests;
 
-    @Column(nullable = false)
+    private String jobCategory;
+
+    private String jobValue;
+
     private String participationPurpose;
 
-    @Column(nullable = false)
     private String additionalNotificationMethods;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -79,5 +95,9 @@ public class Users implements UserDetails
     public void updateNotificationsEnabled()
     {
         this.notificationsEnabled=!notificationsEnabled;
+    }
+
+    public void makeNickName(long number) {
+        this.nickName=jobCategory+(number+1);
     }
 }

@@ -39,24 +39,52 @@ public class UsersServiceTest
     @BeforeAll
     void setUp()
     {
+
         usersService = new UsersService(usersRepository,bCryptPasswordEncoder,authService);
+        UsersRequestDto dto = UsersRequestDto.builder()
+                .username("user123222")
+                .password("securePassword")
+                .affiliation("Company ABC")
+                .career("5 years")
+                .contactInfo("010-1234-5678")
+                .email("usersdsd@example.com")
+                .interestJobCategory("Developer")
+                .interestJobValue("Java")
+                .jobCategory("IT")
+                .jobValue("Engineering")
+                .interests("AI, ML")
+                .participationPurpose("Learning")
+                .additionalNotificationMethods("Email")
+                .build();
+        usersService.create(dto);
     }
 
     @Test
     @Order(0)
     void 회원가입_테스트()
     {
-        UsersRequestDto requestDto = new UsersRequestDto(
-                "testuser", "password123", "Hello, I'm a user!",
-                "USER", "coding", "learning", "email"
-        );
-
-        usersService.create(requestDto);
+        UsersRequestDto dto = UsersRequestDto.builder()
+                .username("user123")
+                .password("securePassword")
+                .affiliation("Company ABC")
+                .career("5 years")
+                .contactInfo("010-1234-5678")
+                .email("user@example.com")
+                .interestJobCategory("Developer")
+                .interestJobValue("Java")
+                .jobCategory("IT")
+                .jobValue("Engineering")
+                .interests("AI, ML")
+                .participationPurpose("Learning")
+                .additionalNotificationMethods("Email")
+                .build();
+        System.out.println( usersRepository.countByJobCategory("IT"));
+        usersService.create(dto);
         // DB에서 직접 조회하여 확인
-        Users savedUser = usersRepository.findByUsername("testuser");
-
+        Users savedUser = usersRepository.findByUsername("user123");
+        System.out.println(savedUser.getNickName());
         assertNotNull(savedUser);
-        assertTrue(bCryptPasswordEncoder.matches("password123", savedUser.getPassword())); // 비밀번호 검증
+        assertTrue(bCryptPasswordEncoder.matches("securePassword", savedUser.getPassword())); // 비밀번호 검증
 
     }
 
@@ -66,8 +94,8 @@ public class UsersServiceTest
     {
         UsersLoginRequest usersLoginRequest = UsersLoginRequest
                 .builder()
-                .username("testuser")
-                .password("password123")
+                .username("user123")
+                .password("securePassword")
                 .build();
         List<Users> users = usersRepository.findAll();
         System.out.println(users.size());
