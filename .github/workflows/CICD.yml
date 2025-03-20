@@ -49,7 +49,6 @@ jobs:
             --build-arg JWT_SECRET=${{ secrets.JWT_SECRET }} \
             --build-arg DEPLOY_SECRET_TOKEN=${{ secrets.DEPLOY_SECRET_TOKEN }} \
             --build-arg REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD }} \
-
             -t ${{ secrets.DOCKERHUB_USERNAME }}/backend_server .
 
       - name: Push Docker
