@@ -15,6 +15,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -52,9 +53,8 @@ public class UsersServiceTest
                 .interestJobValue("Java")
                 .jobCategory("IT")
                 .jobValue("Engineering")
-                .interests("AI, ML")
+                .interests((List.of("value1", "value2")))
                 .participationPurpose("Learning")
-                .additionalNotificationMethods("Email")
                 .build();
         usersService.create(dto);
     }
@@ -74,9 +74,8 @@ public class UsersServiceTest
                 .interestJobValue("Java")
                 .jobCategory("IT")
                 .jobValue("Engineering")
-                .interests("AI, ML")
+                .interests((List.of("value1", "value2")))
                 .participationPurpose("Learning")
-                .additionalNotificationMethods("Email")
                 .build();
         System.out.println( usersRepository.countByJobCategory("IT"));
         usersService.create(dto);

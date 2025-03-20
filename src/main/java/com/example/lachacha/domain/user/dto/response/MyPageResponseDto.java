@@ -2,6 +2,8 @@ package com.example.lachacha.domain.user.dto.response;
 
 import com.example.lachacha.domain.user.domain.Users;
 
+import java.util.List;
+
 public record MyPageResponseDto(
         String username,
         String password,
@@ -13,9 +15,8 @@ public record MyPageResponseDto(
         String interestJobValue,
         String jobCategory,
         String jobValue,
-        String interests,
+        List<String> interests,
         String participationPurpose,
-        String additionalNotificationMethods,
         String nickName
 
 ) {
@@ -33,7 +34,6 @@ public record MyPageResponseDto(
                 user.getJobValue(),
                 user.getInterests(),
                 user.getParticipationPurpose(),
-                user.getAdditionalNotificationMethods(),
                 user.getNickName()
         );
     }

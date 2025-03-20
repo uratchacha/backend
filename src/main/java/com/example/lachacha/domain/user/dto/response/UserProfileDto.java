@@ -2,6 +2,8 @@ package com.example.lachacha.domain.user.dto.response;
 
 import com.example.lachacha.domain.user.domain.Users;
 
+import java.util.List;
+
 public record UserProfileDto(
         Long id,
         String username,
@@ -14,9 +16,8 @@ public record UserProfileDto(
         String interestJobValue,
         String jobCategory,
         String jobValue,
-        String interests,
+        List<String> interests,
         String participationPurpose,
-        String additionalNotificationMethods,
         String nickName
 ) {
     public static UserProfileDto of(Users user) {
@@ -34,7 +35,6 @@ public record UserProfileDto(
                 user.getJobValue(),
                 user.getInterests(),
                 user.getParticipationPurpose(),
-                user.getAdditionalNotificationMethods(),
                 user.getNickName()
         );
     }
