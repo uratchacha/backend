@@ -15,7 +15,9 @@ public record MyPageResponseDto(
         String jobValue,
         String interests,
         String participationPurpose,
-        String additionalNotificationMethods
+        String additionalNotificationMethods,
+        String nickName
+
 ) {
     public static MyPageResponseDto of(Users user) {
         return new MyPageResponseDto(
@@ -31,7 +33,8 @@ public record MyPageResponseDto(
                 user.getJobValue(),
                 user.getInterests(),
                 user.getParticipationPurpose(),
-                user.getAdditionalNotificationMethods()
+                user.getAdditionalNotificationMethods(),
+                user.getNickName()
         );
     }
 }
