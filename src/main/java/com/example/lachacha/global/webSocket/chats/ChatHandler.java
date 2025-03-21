@@ -31,7 +31,6 @@ public class ChatHandler extends TextWebSocketHandler
     public void afterConnectionEstablished(WebSocketSession session) {
         Long chatRoomId = getChatRoomId(session);
         Long userId= getUserId(session);
-
         userSessions.put(userId, session);
         rooms.computeIfAbsent(chatRoomId, k -> new HashSet<>()).add(session);
         log.info("{} 연결됨", session.getId());
@@ -84,7 +83,10 @@ public class ChatHandler extends TextWebSocketHandler
         return Long.parseLong(session.getAttributes().get("chatRoomId").toString());
     }
     private Long getUserId(WebSocketSession session) {
-        return Long.parseLong(session.getAttributes().get("userId").toString());
+
+        //테스트를 위해 임시적으로 변환
+        Object userId = session.getAttributes().get("userId");
+        return userId != null ? Long.parseLong(userId.toString()) : 1L;
     }
 
     public synchronized Map<Long, Set<WebSocketSession>> getRooms() {
