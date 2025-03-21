@@ -1,6 +1,4 @@
 package com.example.lachacha.global.kafka;
-
-
 import com.example.lachacha.global.webSocket.chats.ChatHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -29,10 +27,9 @@ public class ChatKafkaConsumer {
     }
 
     @KafkaListener(topics = "chat-messages", groupId = "chat-group", concurrency = "6")
-    public void listen(List<String> payloads) {
-        log.info("Kafka 메시지 수신: {}", payloads.size());
+    public void listen(String payload) {
         try {
-            messageQueue.addAll(payloads);
+            messageQueue.add(payload);
         } catch (Exception e) {
             log.error("Kafka 메시지 처리 중 오류 발생", e);
         }

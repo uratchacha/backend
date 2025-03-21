@@ -3,7 +3,7 @@ spring:
     activate:
       on-profile: test
   kafka:
-    bootstrap-servers: ${KafKa_URL:localhost:9092}
+    bootstrap-servers: ${KAFKA_URL:localhost:9092}
   datasource:
     url: jdbc:mysql://localhost:3306/testdb
     driver-class-name: com.mysql.cj.jdbc.Driver
