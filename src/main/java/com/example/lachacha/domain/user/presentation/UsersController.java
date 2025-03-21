@@ -7,6 +7,8 @@ import com.example.lachacha.domain.user.dto.response.MyPageResponseDto;
 import com.example.lachacha.domain.user.dto.response.UserProfileDto;
 import com.example.lachacha.global.auth.application.AuthService;
 import com.example.lachacha.global.auth.dto.TokenResponse;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,8 +32,17 @@ public class UsersController {
 
     // 로그인 API
     @PostMapping("/login")
-    public ResponseEntity<TokenResponse> login(@RequestBody UsersLoginRequest usersLoginRequest) {
+    public ResponseEntity<TokenResponse> login(@RequestBody UsersLoginRequest usersLoginRequest,
+                                               HttpServletResponse response) {
         TokenResponse tokenResponse = userService.login(usersLoginRequest);
+
+        Cookie cookie = new Cookie("AccessToken", tokenResponse.accessToken());
+        cookie.setHttpOnly(true);
+        cookie.setSecure(true);
+        cookie.setPath("/");
+        cookie.setMaxAge(60 * 60);
+
+        response.addCookie(cookie);
         return ResponseEntity.ok(tokenResponse);
     }
 
@@ -68,5 +79,11 @@ public class UsersController {
     public ResponseEntity<List<UserProfileDto>> getAllUsers() {
         List<UserProfileDto> userProfileDtos = userService.getAllUsers();
         return ResponseEntity.ok(userProfileDtos);
+    }
+
+    @GetMapping("/check-username")
+    public ResponseEntity<Boolean> checkUsername(@RequestParam String username) {
+        boolean isAvailable = userService.isUsernameAvailable(username);
+        return ResponseEntity.ok(isAvailable);
     }
 }
