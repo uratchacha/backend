@@ -33,13 +33,14 @@ public class UsersService
         return usersRepository.findById(id).orElseThrow(() -> new UsersException(MyErrorCode.USER_NOT_FOUND));
     }
 
+    public boolean isUsernameAvailable(String username)
+    {
+        return !usersRepository.existsByUsername(username);
+    }
     @Transactional
     public void create(UsersRequestDto usersRequestDto)
     {
-        if(usersRepository.existsByUsername(usersRequestDto.username()))
-        {
-            throw new UsersException(MyErrorCode.NOTIFICATION_ERROR);
-        }
+
         Users users= usersRequestDto.toEntity(bCryptPasswordEncoder);
         long number= usersRepository.countByJobCategory(users.getJobCategory());
         users.makeNickName(number);
