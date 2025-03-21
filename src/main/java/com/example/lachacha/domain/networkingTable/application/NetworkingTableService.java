@@ -6,6 +6,7 @@ import com.example.lachacha.domain.networkingTable.config.NetworkingConfig;
 import com.example.lachacha.domain.networkingTable.domain.NetworkingTable;
 import com.example.lachacha.domain.networkingTable.domain.NetworkingTableRepository;
 import com.example.lachacha.domain.networkingTable.dto.NetworkingRequestDto;
+import com.example.lachacha.domain.networkingTable.dto.NetworkingTableRequestDto;
 import com.example.lachacha.domain.networkingTable.enums.TableState;
 import com.example.lachacha.domain.networkingTable.exception.NetworkingTableException;
 import com.example.lachacha.domain.reservation.application.ReservationService;
@@ -32,6 +33,30 @@ public class NetworkingTableService {
     private final NetworkingTableRepository networkingTableRepository;
     private final TableWaitTimeHandler tableWaitTimeHandler;
     private final ReservationService reservationService;
+
+    public NetworkingTable createTable(NetworkingTableRequestDto request) {
+        NetworkingTable table = NetworkingTable.builder()
+                .tableNumber(request.getTableNumber())
+                .state(request.getState())
+                .userIds(request.getUserIds())
+                .build();
+        return networkingTableRepository.save(table);
+    }
+    public NetworkingTable getTableById(Long id) {
+        return networkingTableRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("테이블을 찾을 수 없습니다. ID: " + id));
+    }
+
+    public NetworkingTable updateTable(Long id, NetworkingTableRequestDto request) {
+        NetworkingTable table = getTableById(id);
+        table.getUserIds().clear();
+        table.getUserIds().addAll(request.getUserIds());
+        return networkingTableRepository.save(table);
+    }
+
+    public void deleteTable(Long id) {
+        networkingTableRepository.deleteById(id);
+    }
 
     //테이블 사용
     public String applyForTable(Long chatRoomId) {
