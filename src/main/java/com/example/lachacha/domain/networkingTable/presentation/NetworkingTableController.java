@@ -32,9 +32,16 @@ public class NetworkingTableController {
     }
 
     //테이블 신청
-    @PostMapping("/apply")
-    public ResponseEntity<Void> applyForTable(@RequestBody List<Long> userIds) {
-        networkingTableService.applyForTable(userIds);
+    @PostMapping("/apply/{chatRoomId}")
+    public ResponseEntity<String> applyForTable(@PathVariable("chatRoomId") Long chatRoomId) {
+        String tableNumber = networkingTableService.applyForTable(chatRoomId);
+        return ResponseEntity.ok(tableNumber);
+    }
+
+    //테이블 취소
+    @PostMapping("/cancel/{chatRoomId}")
+    public ResponseEntity<String> cancelTable(@PathVariable("chatRoomId") Long chatRoomId) {
+        networkingTableService.cancelTable(chatRoomId);
         return ResponseEntity.ok().build();
     }
 

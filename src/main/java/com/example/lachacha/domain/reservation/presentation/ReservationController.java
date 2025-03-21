@@ -21,14 +21,14 @@ public class ReservationController {
     // 테이블 예약
     @PostMapping("/create")
     public ResponseEntity<Void> createReservation(@RequestBody ReservationCreateRequestDto requestDto) {
-        reservationService.createReservation(requestDto.getUserIds(),requestDto.getUserId());
+        reservationService.createReservation(requestDto.getChatRoomId(),requestDto.getUserId());
         return ResponseEntity.ok().build();
     }
 
     // 예약 동의
     @PostMapping("/consent")
     public ResponseEntity<Void> consentToReservation(@RequestBody ReservationConsentRequestDto requestDto) {
-        reservationService.consentToReservation(requestDto.getReservationId(),requestDto.getUserId());
+        reservationService.consentToReservation(requestDto.getChatRoomId(),requestDto.getUserId());
         return ResponseEntity.ok().build();
     }
 }

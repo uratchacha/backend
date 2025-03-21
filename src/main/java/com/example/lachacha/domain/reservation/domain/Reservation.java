@@ -31,12 +31,12 @@ public class Reservation {
     private LocalDateTime reservedAt; // 예약 시간
 
     @ElementCollection
-    @CollectionTable(name = "table_reservation_users", joinColumns = @JoinColumn(name = "reservation_id"))
+    @CollectionTable(name = "reservation_users", joinColumns = @JoinColumn(name = "reservation_id"))
     @Column(name = "user_id")
     private List<Long> userIds = new ArrayList<>(); // 예약한 사용자 ID 목록
 
     @ElementCollection
-    @CollectionTable(name = "table_consented_users", joinColumns = @JoinColumn(name = "reservation_id"))
+    @CollectionTable(name = "reservation_consented_users", joinColumns = @JoinColumn(name = "reservation_id"))
     @Column(name = "user_id")
     private List<Long> consentedUserIds = new ArrayList<>(); // 예약을 동의한 사용자 ID 목록
 

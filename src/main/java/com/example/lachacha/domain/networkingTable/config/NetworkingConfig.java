@@ -17,6 +17,9 @@ import java.time.temporal.ChronoUnit;
 @ConfigurationProperties(prefix = "networking")
 public class NetworkingConfig {
 
-    @DurationUnit(ChronoUnit.MILLIS) // 자동으로 밀리초로 변환
-    private Duration duration;
+    @DurationUnit(ChronoUnit.MILLIS)
+    private Duration duration;  //네트워킹 시간 (분 단위)
+
+    @DurationUnit(ChronoUnit.MILLIS) //네트워킹 시작 전 대기 시간 (분 단위)
+    private Duration waitingDuration;
 }

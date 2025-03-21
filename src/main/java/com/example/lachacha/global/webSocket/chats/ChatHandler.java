@@ -87,4 +87,8 @@ public class ChatHandler extends TextWebSocketHandler
         return Long.parseLong(session.getAttributes().get("userId").toString());
     }
 
+    public synchronized Map<Long, Set<WebSocketSession>> getRooms() {
+        return rooms;
+    }
+
 }
