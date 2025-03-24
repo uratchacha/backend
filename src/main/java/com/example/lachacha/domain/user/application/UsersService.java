@@ -2,6 +2,7 @@ package com.example.lachacha.domain.user.application;
 
 import com.example.lachacha.domain.user.domain.Users;
 import com.example.lachacha.domain.user.domain.UsersRepository;
+import com.example.lachacha.domain.user.dto.request.UserUpdateRequestDto;
 import com.example.lachacha.domain.user.dto.request.UsersLoginRequest;
 import com.example.lachacha.domain.user.dto.request.UsersRequestDto;
 import com.example.lachacha.domain.user.dto.response.MyPageResponseDto;
@@ -84,10 +85,18 @@ public class UsersService
 
     public List<UserProfileDto> getAllUsers()
     {
-        List<Users> users=usersRepository.findAll();
+        List<Users> users=usersRepository.findByIsParticipateTrue();
         List<UserProfileDto> userProfileDtos=new ArrayList<>();
         for(Users user:users)
             userProfileDtos.add(UserProfileDto.of(user));
         return userProfileDtos;
+    }
+
+    @Transactional
+    public void updateUser(UserUpdateRequestDto requestDto)
+    {
+        Users user=authService.findUsersByAuth();
+        Users updatedUser=user.updateUserInfo(requestDto);
+        usersRepository.save(updatedUser);
     }
 }

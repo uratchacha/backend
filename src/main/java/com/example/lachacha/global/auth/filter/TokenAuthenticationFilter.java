@@ -3,6 +3,7 @@ package com.example.lachacha.global.auth.filter;
 import com.example.lachacha.global.auth.jwt.TokenProvider;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -15,15 +16,14 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class TokenAuthenticationFilter extends OncePerRequestFilter {
     private final TokenProvider tokenProvider;
-    private final static String HEADER_AUTHORIZATION = "Authorization";
-    private final static String TOKEN_PREFIX = "Bearer ";
+    private final static String COOKIE_NAME = "access_token";
+
 
     @Override
     protected void doFilterInternal(
             HttpServletRequest request, HttpServletResponse response, FilterChain filterChain
     ) throws ServletException, IOException {
-        String authorizationHeader = request.getHeader(HEADER_AUTHORIZATION);
-        String token = getAccessToken(authorizationHeader);
+        String token = getAccessToken(request);
         if (tokenProvider.validateToken(token)) {
             Authentication authentication = tokenProvider.getAuthentication(token);
             SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -31,9 +31,13 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
-    private String getAccessToken(String authorizationHeader) {
-        if (authorizationHeader != null && authorizationHeader.startsWith(TOKEN_PREFIX)) {
-            return authorizationHeader.substring(TOKEN_PREFIX.length());
+    private String getAccessToken(HttpServletRequest request) {
+        if (request.getCookies() != null) {
+            for (Cookie cookie : request.getCookies()) {
+                if (COOKIE_NAME.equals(cookie.getName())) {
+                    return cookie.getValue();
+                }
+            }
         }
         return null;
     }

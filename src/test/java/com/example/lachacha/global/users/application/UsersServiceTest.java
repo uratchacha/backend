@@ -3,12 +3,15 @@ package com.example.lachacha.global.users.application;
 import com.example.lachacha.domain.user.application.UsersService;
 import com.example.lachacha.domain.user.domain.Users;
 import com.example.lachacha.domain.user.domain.UsersRepository;
+import com.example.lachacha.domain.user.dto.request.UserUpdateRequestDto;
 import com.example.lachacha.domain.user.dto.request.UsersLoginRequest;
 import com.example.lachacha.domain.user.dto.request.UsersRequestDto;
 import com.example.lachacha.domain.user.dto.response.MyPageResponseDto;
+import com.example.lachacha.domain.user.dto.response.UserProfileDto;
 import com.example.lachacha.global.auth.application.AuthService;
 import com.example.lachacha.global.auth.dto.TokenResponse;
 import org.junit.jupiter.api.*;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -19,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.when;
 
 
 @SpringBootTest
@@ -37,6 +41,10 @@ public class UsersServiceTest
     @Autowired
     private AuthService authService;
 
+    @Mock
+    private AuthService authServiceMock;
+
+    Users savedUser;
     @BeforeAll
     void setUp()
     {
@@ -80,7 +88,9 @@ public class UsersServiceTest
         System.out.println( usersRepository.countByJobCategory("IT"));
         usersService.create(dto);
         // DB에서 직접 조회하여 확인
-        Users savedUser = usersRepository.findByUsername("user123");
+        savedUser = usersRepository.findByUsername("user123");
+        when(authServiceMock.findUsersByAuth()).thenReturn(savedUser);
+
         System.out.println(savedUser.getNickName());
         assertNotNull(savedUser);
         assertTrue(bCryptPasswordEncoder.matches("securePassword", savedUser.getPassword())); // 비밀번호 검증
@@ -105,4 +115,28 @@ public class UsersServiceTest
 
         assertNotNull(tokenResponse);
     }
+    @Test
+    @Order(2)
+    void 유저조희_테스트()
+    {
+        List<UserProfileDto> usersRequestDtoList =usersService.getAllUsers();
+        List<Users> users = usersRepository.findAll();
+        for(Users user : users)
+            System.out.println(user.isParticipate());
+        System.out.println(usersRequestDtoList.size());
+        System.out.println(users.size());
+    }
+
+    @Test
+    @Order(3)
+    void 유저업데이트_테스트()
+    {
+        usersService = new UsersService(usersRepository,bCryptPasswordEncoder,authServiceMock);
+        UserUpdateRequestDto requestDto = UserUpdateRequestDto.builder()
+                .name("kimaaa")
+                .build();
+        when(authServiceMock.findUsersByAuth()).thenReturn(savedUser);
+        usersService.updateUser(requestDto);
+    }
+
 }
