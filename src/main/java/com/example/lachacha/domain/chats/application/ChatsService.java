@@ -15,8 +15,10 @@ import com.example.lachacha.domain.user.application.UsersService;
 import com.example.lachacha.domain.user.domain.Users;
 import com.example.lachacha.global.auth.application.AuthService;
 import com.example.lachacha.global.exception.MyErrorCode;
+import com.example.lachacha.global.firebase.FcmService;
 import com.example.lachacha.global.webSocket.chats.ChatHandler;
 import com.example.lachacha.global.webSocket.notifications.NotificationHandler;
+import com.example.lachacha.global.webSocket.notifications.service.NotificationService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -40,7 +42,8 @@ public class ChatsService
     private final UsersService userService;
     private final ObjectMapper mapper=new ObjectMapper();
     private final AuthService authService;
-
+    private final FcmService fcmService;
+    private final NotificationService notificationService;
     private final Map<Long, Lock> userLockMap = new HashMap<>();
     private final Map<Long, Lock> chatRoomLockMap = new HashMap<>();
 
@@ -60,6 +63,8 @@ public class ChatsService
             Users users=authService.findUsersByAuth();
             String notificationMessage = createRequestNotificationJson(users.getId(),receiverId);
             notificationHandler.sendNotification(receiverId, notificationMessage);
+            fcmService.sendPushNotificationByUserId(receiverId,"채팅","새로운 채팅 요청이 왔습니다.");
+            notificationService.saveNotification(receiverId,"채팅","새로운 채팅 요청이 왔습니다.");
         } catch (IOException e) {
             throw new ChatsException(MyErrorCode.NOTIFICATION_ERROR);
         }
@@ -122,12 +127,17 @@ public class ChatsService
 
         // 채팅 승인 알림 전송
         sendChatNotification(requester.getId(), "매칭요청이 수락되었습니다.",privateChatRoom.getId());
+        fcmService.sendPushNotificationByUserId(requester.getId(),"채팅","매칭요청이 수락되었습니다.");
+        notificationService.saveNotification(requester.getId(),"채팅","매칭요청이 수락되었습니다.");
         return privateChatRoom.getId();
     }
 
     public void rejectChatRoom(Long requesterId) {
         // 채팅 거절 알림 전송
         sendChatNotification(requesterId, "채팅이 거부되었습니다.",null);
+        fcmService.sendPushNotificationByUserId(requesterId,"채팅","채팅이 거부되었습니다.");
+        notificationService.saveNotification(requesterId,"채팅","채팅이 거부되었습니다.");
+
     }
 
 
@@ -224,6 +234,7 @@ public class ChatsService
             if(Objects.equals(users.getId(), user.getId())&&messageBody.equals("멤버가 추가되었습니다."))
                 continue;
             sendChatNotification(user.getId(),messageBody,groupChatRoom.getId());
+            fcmService.sendPushNotificationByUserId(user.getId(),"채팅",messageBody);
         }
 
         return ChatRoomResponseDto.from(groupChatRoom);

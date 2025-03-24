@@ -30,7 +30,7 @@ class NotificationHandlerTest {
         String message = "Test WebSocket Notification";
 
         when(session.isOpen()).thenReturn(true);
-        notificationHandler.userSessions.put(userId, session);
+        notificationHandler.getUserSessions().put(userId, session); // getter 사용
 
         notificationHandler.sendNotification(userId, message);
 

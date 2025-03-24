@@ -37,15 +37,7 @@ public class NotificationHandshakeInterceptor implements HandshakeInterceptor
                 }
             }
 
-            if (token != null) {
-                Long userId = tokenProvider.getUserId(token);
-                attributes.put("userId", userId);
-            }
-            String notificationType = servletRequest.getServletRequest().getParameter("notificationType");
 
-            if (notificationType != null) {
-                attributes.put("notificationType", notificationType);
-            }
         }
 
         return true;

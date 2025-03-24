@@ -7,34 +7,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/notifications")
+@RequestMapping("/FCM")
 @RequiredArgsConstructor
 public class FcmController {
 
     private final FcmService fcmService;
 
-    @PostMapping("/send")
-    public String sendNotification(@RequestParam String token,
-                                   @RequestParam String title,
-                                   @RequestParam String body) {
-        try {
-            fcmService.sendPushNotification(token, title, body);
-            return "✅ 푸시 알림 전송 성공!";
-        } catch (Exception e) {
-            return "❌ 푸시 알림 전송 실패: " + e.getMessage();
-        }
-    }
-
-    @PostMapping("/send-by-type")
-    public String sendNotificationByType(@RequestParam Long userId,
-                                         @RequestParam String notificationType) {
-        try {
-            fcmService.sendPushNotificationByType(userId, notificationType);
-            return "✅ 푸시 알림 전송 성공 (타입 기반)!";
-        } catch (Exception e) {
-            return "❌ 푸시 알림 전송 실패 (타입 기반): " + e.getMessage();
-        }
-    }
 
     //map방식
     /*@PostMapping("/register-token")
@@ -53,7 +31,7 @@ public class FcmController {
     @PostMapping("/register-token")
     public String registerFcmToken(@RequestBody FcmTokenRequest request) {
         try {
-            fcmService.saveFcmToken(request.getUserId(), request.getToken());
+            fcmService.saveFcmToken(request.getToken());
             return "✅ FCM 토큰 등록 완료!";
         } catch (Exception e) {
             return "❌ FCM 토큰 등록 실패: " + e.getMessage();

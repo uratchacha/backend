@@ -12,8 +12,10 @@ import com.example.lachacha.domain.user.application.UsersService;
 import com.example.lachacha.domain.user.domain.Users;
 import com.example.lachacha.domain.user.domain.UsersRepository;
 import com.example.lachacha.global.auth.application.AuthService;
+import com.example.lachacha.global.firebase.FcmService;
 import com.example.lachacha.global.webSocket.chats.ChatHandler;
 import com.example.lachacha.global.webSocket.notifications.NotificationHandler;
+import com.example.lachacha.global.webSocket.notifications.service.NotificationService;
 import org.junit.jupiter.api.*;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
@@ -49,7 +51,6 @@ public class ChatsServiceWithDBTest
 
     @Mock
     private AuthService authService;
-
     private ChatsService chatsService;
     private Users user1;
     private Users user2;
@@ -58,11 +59,16 @@ public class ChatsServiceWithDBTest
 
     private UsersService usersService;
 
+   @Mock
+   private FcmService fcmService;
+
+   @Mock
+   private NotificationService notificationService;
     @BeforeAll
     void setUp() {
 
         usersService = new UsersService(usersRepository,null,null);
-        chatsService = new ChatsService(notificationHandler,chatHandler,chatRoomRepository,usersService,authService);
+        chatsService = new ChatsService(notificationHandler,chatHandler,chatRoomRepository,usersService,authService,fcmService,notificationService);
         user1 = Users.builder().username("User1").password("54545")
                 .participationPurpose("sd")
                 .build();

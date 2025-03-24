@@ -1,5 +1,6 @@
 package com.example.lachacha.global.webSocket.notifications;
 
+import com.mysql.cj.Session;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
@@ -13,15 +14,13 @@ import java.util.concurrent.ConcurrentHashMap;
 @Slf4j
 @Component
 public class NotificationHandler extends TextWebSocketHandler {
-    public static final Map<Long, WebSocketSession> userSessions = new ConcurrentHashMap<>();
+    private static final Map<Long, WebSocketSession> userSessions = new ConcurrentHashMap<>();
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) {
         Long userId = getUserId(session);
-        String notificationType = getNotificationType(session);
-
         userSessions.put(userId, session);
-        log.info("{} WebSocket 연결됨 (알림 타입: {})", userId, notificationType);
+        log.info("{} WebSocket 연결됨", userId);
     }
 
     @Override
@@ -32,10 +31,9 @@ public class NotificationHandler extends TextWebSocketHandler {
     }
 
     // ✅ WebSocket을 통해 특정 사용자에게 알림 보내기 (상황별 메시지 설정)
-    public void sendNotification(Long userId, String notificationType) throws IOException {
+    public void sendNotification(Long userId, String message) throws IOException {
         WebSocketSession session = userSessions.get(userId);
         if (session != null && session.isOpen()) {
-            String message = getMessageForType(notificationType);
             session.sendMessage(new TextMessage(message));
         }
     }
@@ -54,8 +52,9 @@ public class NotificationHandler extends TextWebSocketHandler {
         return (Long) session.getAttributes().get("userId");
     }
 
-    private String getNotificationType(WebSocketSession session) {
-        return (String) session.getAttributes().get("notificationType");
+
+    public Map<Long, WebSocketSession> getUserSessions() {
+            return userSessions;
     }
 
     public void notifyConferenceEnd(Long userId) throws IOException {
