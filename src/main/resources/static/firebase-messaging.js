@@ -48,7 +48,7 @@ async function requestNotificationPermission() {
     const permission = await Notification.requestPermission();
     if (permission === "granted") {
         console.log("✅ 알림 권한이 허용됨.");
-        const token = await getToken(messaging, { vapidKey: "YOUR_PUBLIC_VAPID_KEY" });
+        const token = await getToken(messaging, { vapidKey: "BLCkdOajIfp0UETEtTgbwCUfHiWto410V9k0mrCFLqO3OIdjW7GbOTUKS8Jwiffta5olcFRLDLxCqRT1zaPM2Yc" });
         console.log("📌 FCM 토큰:", token);
         sendTokenToServer(userId, token);
     } else {
@@ -100,9 +100,6 @@ async function connectWebSocket() {
     };
 }
 
-// ✅ PWA 실행 시 자동으로 실행
-requestNotificationPermission();
-connectWebSocket();
 
 async function registerFcmToken(userId, token) {
     await fetch("/api/notifications/register-token", {
@@ -111,3 +108,5 @@ async function registerFcmToken(userId, token) {
         body: JSON.stringify({ userId, token })
     });
 }
+
+window.requestNotificationPermission = requestNotificationPermission;

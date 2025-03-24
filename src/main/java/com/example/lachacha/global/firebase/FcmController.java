@@ -1,6 +1,8 @@
 package com.example.lachacha.global.firebase;
 
 
+import com.example.lachacha.global.firebase.dto.FcmNotificationRequest;
+import com.example.lachacha.global.firebase.dto.FcmTokenRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,5 +34,39 @@ public class FcmController {
         } catch (Exception e) {
             return "❌ 푸시 알림 전송 실패 (타입 기반): " + e.getMessage();
         }
+    }
+
+    //map방식
+    /*@PostMapping("/register-token")
+    public String registerFcmToken(@RequestBody Map<String, String> body) {
+        try {
+            Long userId = Long.parseLong(body.get("userId"));
+            String token = body.get("token");
+            fcmService.saveFcmToken(userId, token);
+            return "✅ FCM 토큰 등록 완료!";
+        } catch (Exception e) {
+            return "❌ FCM 토큰 등록 실패: " + e.getMessage();
+        }
+    }
+    */
+    // ✅ 프론트에서 FCM 토큰 등록
+    @PostMapping("/register-token")
+    public String registerFcmToken(@RequestBody FcmTokenRequest request) {
+        try {
+            fcmService.saveFcmToken(request.getUserId(), request.getToken());
+            return "✅ FCM 토큰 등록 완료!";
+        } catch (Exception e) {
+            return "❌ FCM 토큰 등록 실패: " + e.getMessage();
+        }
+    }
+
+    // ✅ 푸시 알림 전송 테스트용 API
+    @PostMapping("/send-notification")
+    public void sendNotification(@RequestBody FcmNotificationRequest request) {
+        fcmService.sendPushNotificationByUserId(
+                request.getUserId(),
+                request.getTitle(),
+                request.getBody()
+        );
     }
 }
