@@ -1,10 +1,10 @@
 package com.example.lachacha.global.webSocket.notifications.service;
 
+import com.example.lachacha.domain.user.domain.Users;
+import com.example.lachacha.global.auth.application.AuthService;
 import com.example.lachacha.global.webSocket.notifications.NotificationHandler;
 import com.example.lachacha.global.webSocket.notifications.entity.Notification;
 import com.example.lachacha.global.webSocket.notifications.repository.NotificationRepository;
-import com.example.lachacha.global.webSocket.notifications.repository.NotificationSettingRepository;
-import com.example.lachacha.socket.notifications.entity.NotificationSetting;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -17,22 +17,8 @@ import java.util.Optional;
 public class NotificationService {
 
     private final NotificationRepository notificationRepository;
-    private final NotificationSettingRepository settingRepository;
     private final NotificationHandler notificationHandler;
-
-    // ✅ 사용자 알림 설정 조회
-    public NotificationSetting getUserNotificationSetting(Long userId) {
-        return settingRepository.findById(userId)
-                .orElse(new NotificationSetting(userId)); // 기본값 (ON) 생성
-    }
-
-    // ✅ 사용자 알림 설정 변경
-    public void updateNotificationSetting(Long userId, boolean pushEnabled, boolean webSocketEnabled) {
-        NotificationSetting setting = getUserNotificationSetting(userId);
-        setting.setPushEnabled(pushEnabled);
-        setting.setWebSocketEnabled(webSocketEnabled);
-        settingRepository.save(setting);
-    }
+    private final AuthService authService;
 
     // ✅ 알림 내역 저장
     public void saveNotification(Long userId, String type, String message) {
@@ -41,8 +27,9 @@ public class NotificationService {
     }
 
     // ✅ 사용자의 알림 내역 조회
-    public List<Notification> getUserNotifications(Long userId) {
-        return notificationRepository.findByUserIdOrderByCreatedAtDesc(userId);
+    public List<Notification> getUserNotifications() {
+        Users users =authService.findUsersByAuth();
+        return notificationRepository.findByUserIdOrderByCreatedAtDesc(users.getId());
     }
 
     // ✅ 알림 읽음 처리

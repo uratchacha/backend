@@ -7,7 +7,9 @@ import com.example.lachacha.domain.user.domain.Users;
 import com.example.lachacha.global.auth.application.AuthService;
 import com.example.lachacha.global.auth.jwt.JwtProperties;
 import com.example.lachacha.global.auth.jwt.TokenProvider;
+import com.example.lachacha.global.firebase.FcmService;
 import com.example.lachacha.global.webSocket.notifications.NotificationHandler;
+import com.example.lachacha.global.webSocket.notifications.service.NotificationService;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -23,6 +25,7 @@ import org.springframework.boot.test.autoconfigure.data.redis.DataRedisTest;
 import org.springframework.context.annotation.Import;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -38,6 +41,11 @@ public class ChatsServiceTest
     private UsersService usersService;
     @InjectMocks
     private ChatsService chatsService;
+
+    @Mock
+    private FcmService fcmService;
+    @Mock
+    private NotificationService notificationService;
 
     @BeforeEach
     void setUp()
@@ -55,6 +63,8 @@ public class ChatsServiceTest
         when(usersService.findUsersById(requesterId)).thenReturn(requesterUser);
         when(authService.findUsersByAuth()).thenReturn(requesterUser);
 
+        doNothing().when(fcmService).sendPushNotificationByUserId(receiverId, "채팅", "새로운 채팅 요청이 왔습니다.");
+        doNothing().when(notificationService).saveNotification(receiverId, "채팅", "새로운 채팅 요청이 왔습니다.");
         chatsService.requestChatRoom(receiverId);
         ArgumentCaptor<String> messageCaptor = ArgumentCaptor.forClass(String.class);
         Mockito.verify(notificationHandler).sendNotification(Mockito.eq(receiverId), messageCaptor.capture());

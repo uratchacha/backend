@@ -49,8 +49,7 @@ public class TokenAuthenticationFilterTest
     void doFilterInternal_유효한_토큰() throws ServletException, IOException
     {
         MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setCookies(new Cookie("access_token", "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhYTIwMDJkY2tzQG5hdmVyLmNvbSIsImlhdCI6MTc0Mjc5MzE5MiwiZXh" +
-                "wIjoxNzQyNzk2NzkyLCJzdWIiOiJhZG1pbiIsImlkIjoxfQ.Vdy_6qZoKt9wjXXbk8Q4mQ2S6IDNB-OB7zxLni9dpPY")); // 올바른 Cookie 설정
+        request.setCookies(new Cookie("access_token", token)); // 올바른 Cookie 설정
 
         MockHttpServletResponse response = new MockHttpServletResponse();
         FilterChain filterChain = mock(FilterChain.class);

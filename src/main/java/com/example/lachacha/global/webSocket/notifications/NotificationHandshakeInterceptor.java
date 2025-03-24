@@ -34,21 +34,6 @@ public class NotificationHandshakeInterceptor implements HandshakeInterceptor
                 }
             }
 
-            // ✅ 쿼리 파라미터 방식도 병행 지원, 테스트에 용이함
-            String userIdParam = servletRequest.getServletRequest().getParameter("userId");
-            String notificationType = servletRequest.getServletRequest().getParameter("notificationType");
-
-            if (userIdParam != null) {
-                try {
-                    attributes.put("userId", Long.parseLong(userIdParam));
-                } catch (NumberFormatException e) {
-                    System.out.println("⚠️ userId 파라미터 형식 오류");
-                }
-            }
-
-            if (notificationType != null) {
-                attributes.put("notificationType", notificationType);
-            }
         }
 
         return true;
