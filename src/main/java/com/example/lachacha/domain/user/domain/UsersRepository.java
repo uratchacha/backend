@@ -1,5 +1,6 @@
 package com.example.lachacha.domain.user.domain;
 
+import org.apache.catalina.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -17,4 +18,5 @@ public interface UsersRepository extends JpaRepository<Users, Long>
 
     long countByJobCategory(String jobCategory);
 
+    List<Users> findByIsParticipateTrue();
 }

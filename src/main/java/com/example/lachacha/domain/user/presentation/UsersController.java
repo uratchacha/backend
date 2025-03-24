@@ -1,11 +1,11 @@
 package com.example.lachacha.domain.user.presentation;
 
 import com.example.lachacha.domain.user.application.UsersService;
+import com.example.lachacha.domain.user.dto.request.UserUpdateRequestDto;
 import com.example.lachacha.domain.user.dto.request.UsersLoginRequest;
 import com.example.lachacha.domain.user.dto.request.UsersRequestDto;
 import com.example.lachacha.domain.user.dto.response.MyPageResponseDto;
 import com.example.lachacha.domain.user.dto.response.UserProfileDto;
-import com.example.lachacha.global.auth.application.AuthService;
 import com.example.lachacha.global.auth.dto.TokenResponse;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
@@ -85,5 +85,11 @@ public class UsersController {
     public ResponseEntity<Boolean> checkUsername(@RequestParam String username) {
         boolean isAvailable = userService.isUsernameAvailable(username);
         return ResponseEntity.ok(isAvailable);
+    }
+
+    @PatchMapping()
+    public ResponseEntity<Void> updateProfile(@RequestBody UserUpdateRequestDto usersRequestDto) {
+        userService.updateUser(usersRequestDto);
+        return ResponseEntity.ok().build();
     }
 }

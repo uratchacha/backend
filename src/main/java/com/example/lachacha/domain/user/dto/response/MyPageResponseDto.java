@@ -5,8 +5,6 @@ import com.example.lachacha.domain.user.domain.Users;
 import java.util.List;
 
 public record MyPageResponseDto(
-        String username,
-        String password,
         String affiliation,
         String career,
         String contactInfo,
@@ -23,8 +21,6 @@ public record MyPageResponseDto(
 ) {
     public static MyPageResponseDto of(Users user) {
         return new MyPageResponseDto(
-                user.getUsername(),
-                user.getPassword(),
                 user.getAffiliation(),
                 user.getCareer(),
                 user.getContactInfo(),

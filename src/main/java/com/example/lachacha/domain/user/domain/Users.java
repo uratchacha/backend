@@ -1,6 +1,7 @@
 package com.example.lachacha.domain.user.domain;
 
 import com.example.lachacha.domain.chats.domain.ChatRoom;
+import com.example.lachacha.domain.user.dto.request.UserUpdateRequestDto;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -38,9 +39,11 @@ public class Users implements UserDetails
     private String password;
 
     @Column(nullable = false)
+    @Builder.Default
     private boolean isParticipate=true;
 
     @Column(nullable = false)
+    @Builder.Default
     private boolean notificationsEnabled=true;
 
     @Column(length = 100)
@@ -102,5 +105,28 @@ public class Users implements UserDetails
 
     public void makeNickName(long number) {
         this.nickName=jobCategory+(number+1);
+    }
+
+    public Users updateUserInfo(UserUpdateRequestDto requestDto) {
+        return Users.builder()
+                .id(this.id) // 현재 id는 변경하지 않음
+                .nickName(this.nickName)
+                .isParticipate(this.isParticipate)
+                .notificationsEnabled(this.notificationsEnabled)
+                .chatRoom(this.chatRoom)
+                .username(this.username)
+                .password(this.password)
+                .name(requestDto.name() != null ? requestDto.name() : this.name)
+                .email(requestDto.email() != null ? requestDto.email() : this.email)
+                .affiliation(requestDto.affiliation() != null ? requestDto.affiliation() : this.affiliation)
+                .career(requestDto.career() != null ? requestDto.career() : this.career)
+                .contactInfo(requestDto.contactInfo() != null ? requestDto.contactInfo() : this.contactInfo)
+                .interestJobCategory(requestDto.interestJobCategory() != null ? requestDto.interestJobCategory() : this.interestJobCategory)
+                .interestJobValue(requestDto.interestJobValue() != null ? requestDto.interestJobValue() : this.interestJobValue)
+                .interests(requestDto.interests() != null ? requestDto.interests() : this.interests)
+                .jobCategory(requestDto.jobCategory() != null ? requestDto.jobCategory() : this.jobCategory)
+                .jobValue(requestDto.jobValue() != null ? requestDto.jobValue() : this.jobValue)
+                .participationPurpose(requestDto.participationPurpose() != null ? requestDto.participationPurpose() : this.participationPurpose)
+                .build();
     }
 }

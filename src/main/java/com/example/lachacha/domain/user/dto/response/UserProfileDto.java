@@ -6,8 +6,6 @@ import java.util.List;
 
 public record UserProfileDto(
         Long id,
-        String username,
-        String password,
         String affiliation,
         String career,
         String contactInfo,
@@ -24,8 +22,6 @@ public record UserProfileDto(
     public static UserProfileDto of(Users user) {
         return new UserProfileDto(
                 user.getId(),
-                user.getUsername(),
-                user.getPassword(),
                 user.getAffiliation(),
                 user.getCareer(),
                 user.getContactInfo(),
