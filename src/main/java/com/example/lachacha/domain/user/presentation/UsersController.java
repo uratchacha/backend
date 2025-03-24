@@ -36,7 +36,7 @@ public class UsersController {
                                                HttpServletResponse response) {
         TokenResponse tokenResponse = userService.login(usersLoginRequest);
 
-        Cookie cookie = new Cookie("AccessToken", tokenResponse.accessToken());
+        Cookie cookie = new Cookie("access_token", tokenResponse.accessToken());
         cookie.setHttpOnly(true);
         cookie.setSecure(true);
         cookie.setPath("/");
