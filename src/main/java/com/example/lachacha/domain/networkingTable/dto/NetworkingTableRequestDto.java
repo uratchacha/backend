@@ -9,5 +9,4 @@ import java.util.List;
 public class NetworkingTableRequestDto {
     private String tableNumber;
     private TableState state;
-    private List<Long> userIds;
 }

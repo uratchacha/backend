@@ -63,11 +63,4 @@ public class NetworkingTableController {
         return ResponseEntity.ok().build();
     }
 
-
-    // 네트워킹 시간 변경 (분 단위)
-    @PatchMapping("/duration/{newDuration}")
-    public ResponseEntity<Void> updateNetworkingDuration(@PathVariable("newDuration") long newDuration) {
-        networkingTableService.setNetworkingDuration(newDuration);
-        return ResponseEntity.ok().build();
-    }
 }

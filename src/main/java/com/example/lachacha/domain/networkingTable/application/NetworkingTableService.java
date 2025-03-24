@@ -29,16 +29,15 @@ import java.util.*;
 public class NetworkingTableService {
 
     private  final ChatsService chatsService;
-    private final NetworkingConfig networkingConfig;
     private final NetworkingTableRepository networkingTableRepository;
     private final TableWaitTimeHandler tableWaitTimeHandler;
     private final ReservationService reservationService;
+    private final NetworkingConfig networkingConfig;
 
     public NetworkingTable createTable(NetworkingTableRequestDto request) {
         NetworkingTable table = NetworkingTable.builder()
                 .tableNumber(request.getTableNumber())
                 .state(request.getState())
-                .userIds(request.getUserIds())
                 .build();
         return networkingTableRepository.save(table);
     }
@@ -50,7 +49,6 @@ public class NetworkingTableService {
     public NetworkingTable updateTable(Long id, NetworkingTableRequestDto request) {
         NetworkingTable table = getTableById(id);
         table.getUserIds().clear();
-        table.getUserIds().addAll(request.getUserIds());
         return networkingTableRepository.save(table);
     }
 
