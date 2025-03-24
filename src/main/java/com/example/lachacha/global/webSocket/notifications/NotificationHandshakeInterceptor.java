@@ -1,6 +1,8 @@
 package com.example.lachacha.global.webSocket.notifications;
 
 import com.example.lachacha.global.auth.jwt.TokenProvider;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
@@ -20,19 +22,21 @@ public class NotificationHandshakeInterceptor implements HandshakeInterceptor
     @Override
     public boolean beforeHandshake(ServerHttpRequest request, ServerHttpResponse response, WebSocketHandler wsHandler,Map<String, Object> attributes)
     {
-
         if (request instanceof ServletServerHttpRequest servletRequest) {
-            // ✅ JWT 인증 토큰 파싱
-            String token = servletRequest.getServletRequest().getHeader("Authorization");
-            if (token != null && token.startsWith("Bearer ")) {
-                token = token.substring(7);
-                try {
-                    Long userId = tokenProvider.getUserId(token);
-                    attributes.put("userId", userId);
-                } catch (Exception e) {
-                    System.out.println("⚠️ JWT 인증 실패: " + e.getMessage());
+            HttpServletRequest httpRequest = servletRequest.getServletRequest();
+
+            // 쿠키에서 access_token 가져오기
+            String token = null;
+            Cookie[] cookies = httpRequest.getCookies();
+            if (cookies != null) {
+                for (Cookie cookie : cookies) {
+                    if ("access_token".equals(cookie.getName())) {
+                        token = cookie.getValue();
+                        break;
+                    }
                 }
             }
+
 
         }
 
