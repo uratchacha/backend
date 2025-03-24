@@ -81,7 +81,7 @@ public class SecurityConfig {
 public CorsConfigurationSource corsConfigurationSource() {
     CorsConfiguration configuration = new CorsConfiguration();
     configuration.setAllowedOriginPatterns(Arrays.asList("http://localhost:3000", "https://quick-network.vercel.app")); // 특정 도메인 허용
-    configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+    configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
     configuration.setAllowedHeaders(Arrays.asList("*"));
     configuration.setAllowCredentials(true); //  자격 증명 허용
 
