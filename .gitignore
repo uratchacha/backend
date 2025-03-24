@@ -36,5 +36,8 @@ out/
 ### VS Code ###
 .vscode/
 
+### firebase-csevice-account.json파일 ###
+/src/main/resources/firebase-service-account.json
+
 ### DS_Store ###
 .DS_Store

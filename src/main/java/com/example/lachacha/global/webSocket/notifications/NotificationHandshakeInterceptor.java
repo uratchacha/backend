@@ -41,9 +41,16 @@ public class NotificationHandshakeInterceptor implements HandshakeInterceptor
                 Long userId = tokenProvider.getUserId(token);
                 attributes.put("userId", userId);
             }
+            String notificationType = servletRequest.getServletRequest().getParameter("notificationType");
+
+            if (notificationType != null) {
+                attributes.put("notificationType", notificationType);
+            }
         }
+
         return true;
     }
+
     @Override
     public void afterHandshake(ServerHttpRequest request, ServerHttpResponse response, WebSocketHandler wsHandler, Exception exception) {
     }
