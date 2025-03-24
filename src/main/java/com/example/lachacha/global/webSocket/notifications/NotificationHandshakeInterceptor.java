@@ -1,6 +1,8 @@
 package com.example.lachacha.global.webSocket.notifications;
 
 import com.example.lachacha.global.auth.jwt.TokenProvider;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
@@ -21,11 +23,21 @@ public class NotificationHandshakeInterceptor implements HandshakeInterceptor
     public boolean beforeHandshake(ServerHttpRequest request, ServerHttpResponse response, WebSocketHandler wsHandler,Map<String, Object> attributes)
     {
         if (request instanceof ServletServerHttpRequest servletRequest) {
-            String token =servletRequest.getServletRequest().getHeader("Authorization");
+            HttpServletRequest httpRequest = servletRequest.getServletRequest();
 
+            // 쿠키에서 access_token 가져오기
+            String token = null;
+            Cookie[] cookies = httpRequest.getCookies();
+            if (cookies != null) {
+                for (Cookie cookie : cookies) {
+                    if ("access_token".equals(cookie.getName())) {
+                        token = cookie.getValue();
+                        break;
+                    }
+                }
+            }
 
-            if (token != null && token.startsWith("Bearer ")) {
-                token = token.substring(7);
+            if (token != null) {
                 Long userId = tokenProvider.getUserId(token);
                 attributes.put("userId", userId);
             }
