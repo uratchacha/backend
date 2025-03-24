@@ -7,6 +7,7 @@ import com.example.lachacha.global.webSocket.notifications.entity.Notification;
 import com.example.lachacha.global.webSocket.notifications.repository.NotificationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.util.List;
@@ -14,6 +15,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class NotificationService {
 
     private final NotificationRepository notificationRepository;
@@ -21,6 +23,7 @@ public class NotificationService {
     private final AuthService authService;
 
     // ✅ 알림 내역 저장
+    @Transactional
     public void saveNotification(Long userId, String type, String message) {
         Notification notification = new Notification(userId, type, message);
         notificationRepository.save(notification);
