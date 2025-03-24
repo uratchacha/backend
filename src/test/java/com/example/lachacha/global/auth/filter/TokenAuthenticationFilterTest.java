@@ -5,6 +5,7 @@ import com.example.lachacha.global.auth.application.TokenProviderTest;
 import com.example.lachacha.global.auth.jwt.TokenProvider;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,7 +49,8 @@ public class TokenAuthenticationFilterTest
     void doFilterInternal_유효한_토큰() throws ServletException, IOException
     {
         MockHttpServletRequest request = new MockHttpServletRequest();
-        request.addHeader("Authorization", "Bearer " + token);
+        request.setCookies(new Cookie("access_token", "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhYTIwMDJkY2tzQG5hdmVyLmNvbSIsImlhdCI6MTc0Mjc5MzE5MiwiZXh" +
+                "wIjoxNzQyNzk2NzkyLCJzdWIiOiJhZG1pbiIsImlkIjoxfQ.Vdy_6qZoKt9wjXXbk8Q4mQ2S6IDNB-OB7zxLni9dpPY")); // 올바른 Cookie 설정
 
         MockHttpServletResponse response = new MockHttpServletResponse();
         FilterChain filterChain = mock(FilterChain.class);
@@ -58,6 +60,7 @@ public class TokenAuthenticationFilterTest
 
         // Then
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        System.out.println(authentication);
         assertNotNull(authentication);
         assertEquals("admin", authentication.getName());
     }
