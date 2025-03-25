@@ -2,14 +2,12 @@ package com.example.lachacha.domain.businessCard.domain;
 
 import com.example.lachacha.domain.user.domain.Users;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 
 @Entity
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder

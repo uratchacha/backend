@@ -35,4 +35,12 @@ public class BusinessCardController {
         businessCardService.deleteBusinessCard(id);
         return ResponseEntity.noContent().build();
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<BusinessCardResponseDto> updateCard(
+            @PathVariable Long id,
+            @RequestBody BusinessCardRequestDto dto
+    ) {
+        return ResponseEntity.ok(businessCardService.updateBusinessCard(id, dto));
+    }
 }
