@@ -96,5 +96,11 @@ public class FcmService {
    // public void sendConferenceEndNotification(Long userId) {
     //    sendPushNotificationByType(userId, "NETWORKING_END");
    // }
+    @Transactional
+    public void saveFcmToken(Long userId, String token) {
+        userFcmTokens.put(userId, token);
+        log.info("✅ 테스트 사용자 " + userId + "의 FCM 토큰이 저장됨: " + token);
+    }
+
 }
 
