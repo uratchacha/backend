@@ -29,6 +29,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
         // ✅ 정적 리소스나 푸시 알림 관련 경로는 인증 검사 없이 통과
         if (path.equals("/firebase-messaging-sw.js") ||
                 path.equals("/service-worker.js") ||
+                path.equals("/api/notifications/register-token") ||
                 path.startsWith("/static/") ||
                 path.endsWith(".js") ||
                 path.endsWith(".css") ||
