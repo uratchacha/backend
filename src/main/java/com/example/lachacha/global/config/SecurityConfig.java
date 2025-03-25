@@ -42,6 +42,11 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // 세션 사용 X
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/", "/index.html").permitAll()
+                        .requestMatchers(
+                                "/firebase-messaging.js",
+                                "/firebase-messaging-sw.js",
+                                "/service-worker.js"
+                        ).permitAll()
                         .requestMatchers(PUBLIC_ENDPOINTS).permitAll() // 공개 API 허용
                         .requestMatchers("/env").access(this::validateDeployToken)
                         .anyRequest().permitAll()
