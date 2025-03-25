@@ -16,6 +16,8 @@ spring:
     consumer:
       group-id: chat-group
       auto-offset-reset: earliest
+      enable-auto-commit: false
+      max-poll-records: 10 # 한 번에 최대 10개의 메시지 가져오기
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.apache.kafka.common.serialization.StringSerializer
