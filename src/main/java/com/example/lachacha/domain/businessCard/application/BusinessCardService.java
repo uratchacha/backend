@@ -7,6 +7,7 @@ import com.example.lachacha.domain.businessCard.dto.BusinessCardResponseDto;
 import com.example.lachacha.domain.businessCard.exception.BusinessCardException;
 import com.example.lachacha.domain.user.domain.Users;
 import com.example.lachacha.global.auth.application.AuthService;
+import com.example.lachacha.global.exception.MyErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -60,5 +61,33 @@ public class BusinessCardService {
             throw new SecurityException("삭제 권한이 없습니다.");
         }
         businessCardRepository.delete(card);
+    }
+
+    public BusinessCardResponseDto updateBusinessCard(Long id, BusinessCardRequestDto dto) {
+        Users currentUser = authService.findUsersByAuth();
+
+        BusinessCard card = businessCardRepository.findById(id)
+                .orElseThrow(() -> new BusinessCardException(MyErrorCode.INVALID_INPUT));
+
+        if (!card.getUser().getId().equals(currentUser.getId())) {
+            throw new BusinessCardException(MyErrorCode.USER_NOT_FOUND);
+        }
+
+        // 중복 이메일 체크 (자기 자신은 제외)
+        Optional<BusinessCard> duplicate = businessCardRepository.findByEmailAndUser(dto.getEmail(), currentUser);
+        if (duplicate.isPresent() && !duplicate.get().getId().equals(id)) {
+            throw new BusinessCardException(MyErrorCode.DUPLICATE_BUSINESS_CARD);
+        }
+
+        // 값 업데이트
+        card.setName(dto.getName());
+        card.setUsername(dto.getUsername());
+        card.setEmail(dto.getEmail());
+        card.setContactInfo(dto.getContactInfo());
+        card.setAffiliation(dto.getAffiliation());
+        card.setJobCategory(dto.getJobCategory());
+        card.setJobValue(dto.getJobValue());
+
+        return BusinessCardResponseDto.fromEntity(businessCardRepository.save(card));
     }
 }
