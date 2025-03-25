@@ -4,13 +4,17 @@ import com.example.lachacha.domain.businessCard.domain.BusinessCard;
 import com.example.lachacha.domain.businessCard.domain.BusinessCardRepository;
 import com.example.lachacha.domain.businessCard.dto.BusinessCardRequestDto;
 import com.example.lachacha.domain.businessCard.dto.BusinessCardResponseDto;
+import com.example.lachacha.domain.businessCard.exception.BusinessCardException;
 import com.example.lachacha.domain.user.domain.Users;
 import com.example.lachacha.global.auth.application.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
+
+import static com.example.lachacha.global.exception.MyErrorCode.DUPLICATE_BUSINESS_CARD;
 
 @Service
 @RequiredArgsConstructor
@@ -28,6 +32,12 @@ public class BusinessCardService {
 
     public BusinessCardResponseDto addBusinessCard(BusinessCardRequestDto dto) {
         Users currentUser = authService.findUsersByAuth();
+
+        Optional<BusinessCard> existingCard = businessCardRepository.findByEmailAndUser(dto.getEmail(), currentUser);
+        if (existingCard.isPresent()) {
+            throw new BusinessCardException(DUPLICATE_BUSINESS_CARD);
+        }
+
         BusinessCard card = BusinessCard.builder()
                 .name(dto.getName())
                 .username(dto.getUsername())
