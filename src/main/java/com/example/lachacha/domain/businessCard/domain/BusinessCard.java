@@ -21,7 +21,7 @@ public class BusinessCard {
     private String name;
     private String username;
     private String email;
-    private String phone;
+    private String contactInfo;
     private String affiliation;
     private String jobCategory;
     private String jobValue;

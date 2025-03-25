@@ -16,7 +16,7 @@ public class BusinessCardResponseDto {
     private String name;
     private String username;
     private String email;
-    private String phone;
+    private String contactInfo;
     private String affiliation;
     private String jobCategory;
     private String jobValue;
@@ -27,7 +27,7 @@ public class BusinessCardResponseDto {
                 .name(card.getName())
                 .username(card.getUsername())
                 .email(card.getEmail())
-                .phone(card.getPhone())
+                .contactInfo(card.getContactInfo())
                 .affiliation(card.getAffiliation())
                 .jobCategory(card.getJobCategory())
                 .jobValue(card.getJobValue())

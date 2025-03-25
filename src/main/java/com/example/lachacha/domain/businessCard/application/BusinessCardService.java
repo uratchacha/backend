@@ -32,7 +32,7 @@ public class BusinessCardService {
                 .name(dto.getName())
                 .username(dto.getUsername())
                 .email(dto.getEmail())
-                .phone(dto.getPhone())
+                .contactInfo(dto.getContactInfo())
                 .affiliation(dto.getAffiliation())
                 .jobCategory(dto.getJobCategory())
                 .jobValue(dto.getJobValue())
