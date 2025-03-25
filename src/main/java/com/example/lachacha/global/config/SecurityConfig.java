@@ -43,7 +43,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/", "/index.html").permitAll()
                         .requestMatchers(
-                                "/firebase-messaging.js",
+                                "/firebase-init.js",
                                 "/firebase-messaging-sw.js",
                                 "/service-worker.js"
                         ).permitAll()
