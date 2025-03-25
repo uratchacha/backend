@@ -2,8 +2,18 @@ spring:
   config:
     activate:
       on-profile: test
+    import: optional:file:.env[.properties]
+
   kafka:
     bootstrap-servers: ${KAFKA_URL:localhost:9092}
+    consumer:
+      group-id: chat-group
+      auto-offset-reset: earliest
+      enable-auto-commit: false
+      max-poll-records: 10 # 한 번에 최대 10개의 메시지 가져오기
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
   datasource:
     url: jdbc:mysql://localhost:3306/testdb
     driver-class-name: com.mysql.cj.jdbc.Driver
