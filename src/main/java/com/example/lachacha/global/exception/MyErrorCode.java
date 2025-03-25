@@ -28,7 +28,8 @@ public enum MyErrorCode {
     INVALID_REFRESH_TOKEN("INVALID_REFRESH_TOKEN","유효 하지 않은 토큰 값입니다.",HttpStatus.BAD_REQUEST),
     REFRESH_TOKEN_NOT_FOUND("REFRESH_TOKEN_NOT_FOUND", "존재 하지 않은 리프레쉬 토큰입니다." , HttpStatus.NOT_FOUND),
     PASSWORD_NOT_MATCH("PASSWORD_NOT_MATCH","비밀번호가 다릅니다", HttpStatus.BAD_REQUEST),
-    GROUP_CHAT_FULL("GROUP_CHAT_FULL","채팅방에 인원이 다 찼습니다.",HttpStatus.BAD_REQUEST);
+    GROUP_CHAT_FULL("GROUP_CHAT_FULL","채팅방에 인원이 다 찼습니다.",HttpStatus.BAD_REQUEST),
+    DUPLICATE_BUSINESS_CARD("DUPLICATE_BUSINESS_CARD", "이미 존재하는 명함입니다.", HttpStatus.CONFLICT);
 
     private final String code;       // 예외 코드
     private final String message;    // 예외 메시지
