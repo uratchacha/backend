@@ -1,3 +1,6 @@
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+import { getMessaging, getToken } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-messaging.js";
+
 const firebaseConfig = {
     apiKey: "AIzaSyAG5Dy_cMVsKyp9mrF6X8mWYa5xM_16IzI",
     authDomain: "uratchacha-9c430.firebaseapp.com",
@@ -8,8 +11,8 @@ const firebaseConfig = {
     measurementId: "G-FM9MG74NEC"
 };
 
-firebase.initializeApp(firebaseConfig);
-const messaging = firebase.messaging();
+const app = initializeApp(firebaseConfig);
+const messaging = getMessaging(app);
 
 async function getUserId() {
     let userId = localStorage.getItem("userId");
@@ -34,11 +37,15 @@ async function requestNotificationPermission() {
 
     const permission = await Notification.requestPermission();
     if (permission === "granted") {
-        const token = await messaging.getToken({
-            vapidKey: "BLCkdOajIfp0UETEtTgbwCUfHiWto410V9k0mrCFLqO3OIdjW7GbOTUKS8Jwiffta5olcFRLDLxCqRT1zaPM2Yc"
-        });
-        console.log("📌 FCM 토큰:", token);
-        await sendTokenToServer(userId, token);
+        try {
+            const token = await getToken(messaging, {
+                vapidKey: "BLCkdOajIfp0UETEtTgbwCUfHiWto410V9k0mrCFLqO3OIdjW7GbOTUKS8Jwiffta5olcFRLDLxCqRT1zaPM2Yc"
+            });
+            console.log("📌 FCM 토큰:", token);
+            await sendTokenToServer(userId, token);
+        } catch (e) {
+            console.error("❌ FCM 토큰 발급 실패:", e);
+        }
     }
 }
 

@@ -6,13 +6,13 @@ importScripts(
 );
 
 const firebaseConfig = {
-  apiKey: 'AIzaSyDCXwxlTrjzo2WsJgntP9s9mo9ujAMuDYU',
-  authDomain: 'fest-network.firebaseapp.com',
-  projectId: 'fest-network',
-  storageBucket: 'fest-network.firebasestorage.app',
-  messagingSenderId: '1030223872143',
-  appId: '1:1030223872143:web:7c1e46268993198818f0fa',
-  measurementId: 'G-DK1LED1L4V',
+  apiKey: "AIzaSyAG5Dy_cMVsKyp9mrF6X8mWYa5xM_16IzI",
+  authDomain: "uratchacha-9c430.firebaseapp.com",
+  projectId: "uratchacha-9c430",
+  storageBucket: "uratchacha-9c430.firebasestorage.app",
+  messagingSenderId: "975825146714",
+  appId: "1:975825146714:web:e338b5e9ae8e67264f1963",
+  measurementId: "G-FM9MG74NEC"
 };
 
 firebase.initializeApp(firebaseConfig);
