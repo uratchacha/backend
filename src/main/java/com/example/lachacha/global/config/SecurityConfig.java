@@ -45,7 +45,8 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/firebase-init.js",
                                 "/firebase-messaging-sw.js",
-                                "/service-worker.js"
+                                "/service-worker.js",
+                                "/api/notifications/register-token"
                         ).permitAll()
                         .requestMatchers(PUBLIC_ENDPOINTS).permitAll() // 공개 API 허용
                         .requestMatchers("/env").access(this::validateDeployToken)
