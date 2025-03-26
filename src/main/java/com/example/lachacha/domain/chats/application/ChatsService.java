@@ -57,6 +57,7 @@ public class ChatsService
     }
 
 
+    @Transactional
     public void requestChatRoom(Long receiverId)
     {
         try {
@@ -132,6 +133,7 @@ public class ChatsService
         return privateChatRoom.getId();
     }
 
+    @Transactional
     public void rejectChatRoom(Long requesterId) {
         // 채팅 거절 알림 전송
         sendChatNotification(requesterId, "채팅이 거부되었습니다.",null);
