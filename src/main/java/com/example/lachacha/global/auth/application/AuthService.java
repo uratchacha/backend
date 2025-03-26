@@ -20,6 +20,7 @@ import java.time.Duration;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
+@Slf4j
 public class AuthService {
 
     private final RefreshTokenRepository refreshTokenRepository;
@@ -35,6 +36,7 @@ public class AuthService {
         try {
             Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             String username = ((UserDetails) principal).getUsername();
+            log.info(username);
             return usersRepository.findByUsername(username);
         } catch (Exception e) {
             throw new UsersException(MyErrorCode.USER_NOT_FOUND);
