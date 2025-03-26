@@ -24,49 +24,45 @@ public class ReservationService {
     private final ReservationRepository reservationRepository;
     private final TableWaitTimeHandler tableWaitTimeHandler;
     private final ChatsService chatsService;
-
-    // 테이블 예약 생성
     @Transactional
-    public void createReservation(Long chatRoomId, Long userId) {
-        ChatRoomResponseDto chatRoom = chatsService.findChatRoomById(chatRoomId);
-
-        List<Long> userIds = chatRoom.members().stream()
-                .map(Users::getId)
-                .toList();
-
-        Reservation reservation = Reservation.builder()
-                .userIds(new ArrayList<>(userIds))
-                .consentedUserIds(new ArrayList<>(List.of(userId)))
-                .state(ReservationState.NOT_RESERVED)
-                .build();
-
-        Reservation savedReservation = reservationRepository.save(reservation);
-
-        tableWaitTimeHandler.addNotReservedReservation(chatRoomId, savedReservation.getId());
-
-    }
-
-    // 예약 동의
-    @Transactional
-    public void consentToReservation(Long chatRoomId, Long userId) {
+    public void consentOrCreateReservation(Long chatRoomId, Long userId) {
         Long reservationId = tableWaitTimeHandler.getReservationIdByChatRoomId(chatRoomId);
 
+        // 예약이 없으면 생성
+        if (reservationId == null) {
+            ChatRoomResponseDto chatRoom = chatsService.findChatRoomById(chatRoomId);
+
+            List<Long> userIds = chatRoom.members().stream()
+                    .map(Users::getId)
+                    .toList();
+
+            Reservation reservation = Reservation.builder()
+                    .userIds(new ArrayList<>(userIds))
+                    .consentedUserIds(new ArrayList<>(List.of(userId)))
+                    .state(ReservationState.NOT_RESERVED)
+                    .build();
+
+            Reservation savedReservation = reservationRepository.save(reservation);
+            tableWaitTimeHandler.addNotReservedReservation(chatRoomId, savedReservation.getId());
+
+            // 예약 생성 후 동의자 1명 추가된 상태이므로 상태 확인
+            checkAndConfirmReservation(savedReservation);
+            return;
+        }
+
+        // 예약이 존재하면 기존 예약에 동의
         Reservation reservation = reservationRepository.findById(reservationId)
                 .orElseThrow(() -> new ReservationException(MyErrorCode.RESERVATION_NOT_FOUND));
 
-        // 예약 사용자 검증
         if (isUserNotInReservation(reservation, userId)) {
             throw new ReservationException(MyErrorCode.USER_NOT_IN_RESERVATION);
         }
 
-        // 예약 중복 동의 검증
         if (hasUserAlreadyConsented(reservation, userId)) {
             throw new ReservationException(MyErrorCode.USER_ALREADY_CONSENTED);
         }
 
         reservation.consent(userId);
-
-        // 모든 사용자가 동의했는지 확인 후 상태 변경
         checkAndConfirmReservation(reservation);
 
         reservationRepository.save(reservation);

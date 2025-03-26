@@ -18,17 +18,12 @@ public class ReservationController {
 
     private final ReservationService reservationService;
 
-    // 테이블 예약
-    @PostMapping("/create")
-    public ResponseEntity<Void> createReservation(@RequestBody ReservationCreateRequestDto requestDto) {
-        reservationService.createReservation(requestDto.getChatRoomId(),requestDto.getUserId());
+    // 예약 동의 (예약이 없으면 생성 후 동의까지)
+    @PostMapping("/consent")
+    public ResponseEntity<Void> consentToReservation(@RequestBody ReservationConsentRequestDto requestDto) {
+        reservationService.consentOrCreateReservation(requestDto.getChatRoomId(), requestDto.getUserId());
         return ResponseEntity.ok().build();
     }
 
-    // 예약 동의
-    @PostMapping("/consent")
-    public ResponseEntity<Void> consentToReservation(@RequestBody ReservationConsentRequestDto requestDto) {
-        reservationService.consentToReservation(requestDto.getChatRoomId(),requestDto.getUserId());
-        return ResponseEntity.ok().build();
-    }
+
 }
