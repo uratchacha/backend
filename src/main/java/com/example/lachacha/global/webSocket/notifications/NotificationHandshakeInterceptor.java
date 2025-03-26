@@ -37,6 +37,12 @@ public class NotificationHandshakeInterceptor implements HandshakeInterceptor
                 }
             }
 
+            if (token != null) {
+                Long userId = tokenProvider.getUserId(token);
+                attributes.put("userId", userId);
+            }
+
+
 
         }
 
