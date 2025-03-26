@@ -24,22 +24,10 @@ public class ChatHandshakeInterceptor implements HandshakeInterceptor
     {
         if (request instanceof ServletServerHttpRequest servletRequest) {
             String chatRoomId = servletRequest.getServletRequest().getParameter("chatRoomId");
-            HttpServletRequest httpRequest = servletRequest.getServletRequest();
+            String accessToken = servletRequest.getServletRequest().getParameter("access_token");
 
-            // 쿠키에서 access_token 가져오기
-            String token = null;
-            Cookie[] cookies = httpRequest.getCookies();
-            if (cookies != null) {
-                for (Cookie cookie : cookies) {
-                    if ("access_token".equals(cookie.getName())) {
-                        token = cookie.getValue();
-                        break;
-                    }
-                }
-            }
-
-            if (token != null) {
-                Long userId = tokenProvider.getUserId(token);
+            if (accessToken != null) {
+                Long userId = tokenProvider.getUserId(accessToken);
                 attributes.put("userId", userId);
             }
 
