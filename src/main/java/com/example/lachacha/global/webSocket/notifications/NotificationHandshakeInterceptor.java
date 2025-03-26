@@ -4,6 +4,7 @@ import com.example.lachacha.global.auth.jwt.TokenProvider;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.http.server.ServletServerHttpRequest;
@@ -15,6 +16,7 @@ import java.util.Map;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class NotificationHandshakeInterceptor implements HandshakeInterceptor
 {
     private final TokenProvider tokenProvider;
@@ -28,14 +30,15 @@ public class NotificationHandshakeInterceptor implements HandshakeInterceptor
 
             if (accessToken != null) {
                 Long userId = tokenProvider.getUserId(accessToken);
+                log.info("user id is {}", userId);
                 attributes.put("userId", userId);
             }
 
 
-
+            return true;
         }
 
-        return true;
+        return false;
     }
 
     @Override
