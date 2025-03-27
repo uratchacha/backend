@@ -23,11 +23,8 @@ ENV JWT_ISSUER=${JWT_ISSUER}
 ENV JWT_SECRET=${JWT_SECRET}
 ENV DEPLOY_SECRET_TOKEN=${DEPLOY_SECRET_TOKEN}
 
-COPY firebase-service-account.json /app/src/main/resources/firebase-service-account.json
+COPY src/main/resources/firebase-service-account.json /app/src/main/resources/firebase-service-account.json
 COPY build/libs/*.jar app.jar
-
-RUN mkdir -p /app/src/main/resources && \
-    printf '%s' "$FIREBASE_CONFIG" > /app/src/main/resources/firebase-service-account.json
 
 # Run the application with environment variables
 ENTRYPOINT ["java", \
