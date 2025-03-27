@@ -74,6 +74,14 @@ public class UsersController {
         return ResponseEntity.ok(myPageResponseDto);
     }
 
+    @GetMapping("/{userId}")
+    public ResponseEntity<UserProfileDto> getUserById(@PathVariable Long userId)
+    {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(UserProfileDto.of(userService.findUsersById(userId)));
+    }
+
+
     // 모든 유저 조회 API
     @GetMapping("/all")
     public ResponseEntity<List<UserProfileDto>> getAllUsers() {
