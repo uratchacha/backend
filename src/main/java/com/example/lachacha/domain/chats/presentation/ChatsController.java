@@ -3,6 +3,7 @@ package com.example.lachacha.domain.chats.presentation;
 import com.example.lachacha.domain.chats.application.ChatsService;
 import com.example.lachacha.domain.chats.dto.ChatsMessageDto;
 import com.example.lachacha.domain.chats.dto.request.ExitChatRoomRequestDto;
+import com.example.lachacha.domain.chats.dto.request.GroupChatsRequestDto;
 import com.example.lachacha.domain.chats.dto.request.JoinGroupRequestDto;
 import com.example.lachacha.domain.chats.dto.request.PrivateChatsRequestDto;
 import com.example.lachacha.domain.chats.dto.response.ChatRoomResponseDto;
@@ -58,10 +59,10 @@ public class ChatsController
     }
 
     @PostMapping("/group-chatroom/create")
-    public ResponseEntity<ChatRoomResponseDto> createGroupChat()
+    public ResponseEntity<ChatRoomResponseDto> createGroupChat(@RequestBody GroupChatsRequestDto groupChatsRequestDto)
     {
         return ResponseEntity.status(HttpStatus.OK)
-                .body(chatsService.createGroupChat());
+                .body(chatsService.createGroupChat(groupChatsRequestDto));
     }
 
     @PostMapping("/group-chatroom/join")

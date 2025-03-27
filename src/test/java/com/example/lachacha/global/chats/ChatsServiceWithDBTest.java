@@ -142,14 +142,13 @@ public class ChatsServiceWithDBTest
     void creatAndJoinGroupChatTest() throws Exception
     {
         GroupChatsRequestDto groupChatsRequestDto = GroupChatsRequestDto.builder()
-                .maxSize(3)
                 .build();
         Mockito.when(authService.findUsersByAuth())
                 .thenReturn(user1) // 첫 번째 호출 -> user1
                 .thenReturn(user2) // 두 번째 호출 -> user2
                 .thenReturn(user3); // 세 번째 호출 -> user3
 
-        ChatRoom chatRoom =chatRoomRepository.findById(chatsService.createGroupChat().id()).orElse(null);
+        ChatRoom chatRoom =chatRoomRepository.findById(chatsService.createGroupChat(groupChatsRequestDto).id()).orElse(null);
         assert chatRoom != null;
         JoinGroupRequestDto joinGroupRequestDto = JoinGroupRequestDto.builder()
                 .chatRoomId(chatRoom.getId())
