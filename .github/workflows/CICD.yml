@@ -52,6 +52,8 @@ jobs:
             --build-arg REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD }} \
             -t ${{ secrets.DOCKERHUB_USERNAME }}/backend_server .
 
+            
+
       - name: Push Docker
         run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/backend_server:latest
 
