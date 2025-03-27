@@ -1,6 +1,8 @@
 package com.example.lachacha.global.firebase;
 
 
+import com.example.lachacha.domain.user.domain.Users;
+import com.example.lachacha.global.auth.application.AuthService;
 import com.example.lachacha.global.firebase.dto.FcmNotificationRequest;
 import com.example.lachacha.global.firebase.dto.FcmTokenRequest;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 public class FcmController {
 
     private final FcmService fcmService;
+    private AuthService authService;
 
 
     //map방식
@@ -46,11 +49,12 @@ public class FcmController {
 
     // ✅ 푸시 알림 전송 테스트용 API
     @PostMapping("/send-notification")
-    public void sendNotification(@RequestBody FcmNotificationRequest request) {
+    public void sendNotificationToCurrentUser(@RequestBody FcmNotificationRequest request) {
+        Users user = authService.findUsersByAuth();
         fcmService.sendPushNotificationByUserId(
-                request.getUserId(),
+                user.getId(),
                 request.getTitle(),
                 request.getBody()
         );
     }
-}
+    }
