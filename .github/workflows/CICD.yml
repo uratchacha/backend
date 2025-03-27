@@ -27,7 +27,13 @@ jobs:
           container port: 3306
           mysql database: 'testdb'
           mysql root password: 1234
+          
+      - name: Create firebase-service-account.json
+        run: |
+          mkdir -p src/main/resources
+          echo '${{ secrets.FIREBASE_SERVICE_ACCOUNT }}' > src/main/resources/firebase-service-account.json
 
+    
       - name: Build with Gradle
         run: |
           chmod +x ./gradlew
@@ -38,11 +44,6 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-
-      - name: Create firebase-service-account.json
-        run: |
-          echo '${{ secrets.FIREBASE_SERVICE_ACCOUNT }}' > firebase-service-account.json
-
 
       - name: Build Docker
         run: |
