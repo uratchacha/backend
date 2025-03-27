@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 public class FcmController {
 
     private final FcmService fcmService;
-    private AuthService authService;
+    private final AuthService authService;
 
 
     //map방식
