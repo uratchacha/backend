@@ -24,6 +24,9 @@ public class ReservationService {
     private final ReservationRepository reservationRepository;
     private final TableWaitTimeHandler tableWaitTimeHandler;
     private final ChatsService chatsService;
+
+    private final Map<Long, Long> reservedReservations = new LinkedHashMap<>(); // 채팅방 ID → 예약 ID 매핑
+
     @Transactional
     public void consentOrCreateReservation(Long chatRoomId, Long userId) {
         Long reservationId = tableWaitTimeHandler.getReservationIdByChatRoomId(chatRoomId);

@@ -165,6 +165,8 @@ public class NetworkingTableService {
         networkingConfig.setDuration(Duration.ofMinutes(newDurationInMinutes));
     }
 
+
+    //예상 대기시간 List
     public List<Integer> calculateEstimatedWaitTimes() {
         // 1. 사용 가능한 테이블이 하나라도 있다면 대기시간 없이 빈 리스트 반환
         if (networkingTableRepository.existsByState(TableState.AVAILABLE)) {
