@@ -6,7 +6,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class FcmNotificationRequest {
-    private Long userId;
     private String title;
     private String body;
 }
