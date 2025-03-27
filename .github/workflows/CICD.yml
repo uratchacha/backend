@@ -42,6 +42,7 @@ jobs:
       - name: Build Docker
         run: |
           docker build --platform linux/amd64 \
+            --build-arg FIREBASE_CONFIG="${{ secrets.FIREBASE_SERVICE_ACCOUNT }}" \
             --build-arg DB_URL=${{ secrets.DB_URL }} \
             --build-arg DB_USERNAME=${{ secrets.DB_USERNAME }} \
             --build-arg DB_PASSWORD=${{ secrets.DB_PASSWORD }} \
