@@ -149,7 +149,7 @@ public class ChatsServiceWithDBTest
                 .thenReturn(user2) // 두 번째 호출 -> user2
                 .thenReturn(user3); // 세 번째 호출 -> user3
 
-        ChatRoom chatRoom =chatRoomRepository.findById(chatsService.createGroupChat(groupChatsRequestDto).id()).orElse(null);
+        ChatRoom chatRoom =chatRoomRepository.findById(chatsService.createGroupChat().id()).orElse(null);
         assert chatRoom != null;
         JoinGroupRequestDto joinGroupRequestDto = JoinGroupRequestDto.builder()
                 .chatRoomId(chatRoom.getId())
