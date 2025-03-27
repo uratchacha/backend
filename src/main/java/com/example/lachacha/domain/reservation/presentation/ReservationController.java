@@ -25,5 +25,16 @@ public class ReservationController {
         return ResponseEntity.ok().build();
     }
 
+    //대기시간 확인
+    @GetMapping("/wait-time/{chatRoomId}")
+    public ResponseEntity<Integer> getWaitingTime(@PathVariable("chatRoomId") Long chatRoomId) {
+        // 현재는 하드코딩된 0 반환
+        int waitingTime = 0;
+
+        // 로그 찍거나 chatRoomId 활용할 수 있음
+        System.out.println("요청 받은 채팅방 ID: " + chatRoomId);
+
+        return ResponseEntity.ok(waitingTime);
+    }
 
 }

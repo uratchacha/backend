@@ -21,60 +21,50 @@ public class TableWaitTimeHandler {
     // 예약이 확정된 맵 (RESERVED 상태)
     private final Map<Long, Long> reservedReservations = new LinkedHashMap<>(); // 채팅방 ID → 예약 ID 매핑
 
-    public void updateWaitTimes(List<Integer> waitTimes, Duration networkingDuration) {
-      //  List<Integer> waitTimes = networkingTableService.calculateEstimatedWaitTimes();
-        Map<Long, Set<WebSocketSession>> rooms = chatHandler.getRooms();
+//    public void updateWaitTimes(List<Integer> waitTimes, Duration networkingDuration) {
+//      //  List<Integer> waitTimes = networkingTableService.calculateEstimatedWaitTimes();
+//        Map<Long, Set<WebSocketSession>> rooms = chatHandler.getRooms();
+//
+//        if (waitTimes.isEmpty()) {
+//            for (Set<WebSocketSession> sessions : rooms.values()) {
+//                for (WebSocketSession session : sessions) {
+//                    sendWaitTime(session, 0);
+//                }
+//            }
+//            return;
+//        }
+//
+//        int i = 0, n = 0, lastWaitTime = 0;
+//
+//        for (Map.Entry<Long, Long> entry : reservedReservations.entrySet()) {
+//            Long chatRoomId = entry.getKey();
+//            int waitTime = waitTimes.get(n) + (int) networkingDuration.toMinutes() * i;
+//
+//            Optional.ofNullable(rooms.get(chatRoomId)).ifPresent(sessions -> {
+//                for (WebSocketSession session : sessions) {
+//                    sendWaitTime(session, waitTime);
+//                }
+//            });
+//
+//            n++;
+//            if (n >= waitTimes.size()) {
+//                n = 0;
+//                i++;
+//            }
+//
+//            lastWaitTime = waitTime;
+//        }
+//
+//        for (Long chatRoomId : rooms.keySet()) {
+//            if (!reservedReservations.containsKey(chatRoomId)) {
+//                for (WebSocketSession session : rooms.get(chatRoomId)) {
+//                    sendWaitTime(session, lastWaitTime);
+//                }
+//            }
+//        }
+//    }
 
-        if (waitTimes.isEmpty()) {
-            for (Set<WebSocketSession> sessions : rooms.values()) {
-                for (WebSocketSession session : sessions) {
-                    sendWaitTime(session, 0);
-                }
-            }
-            return;
-        }
 
-        int i = 0, n = 0, lastWaitTime = 0;
-
-        for (Map.Entry<Long, Long> entry : reservedReservations.entrySet()) {
-            Long chatRoomId = entry.getKey();
-            int waitTime = waitTimes.get(n) + (int) networkingDuration.toMinutes() * i;
-
-            Optional.ofNullable(rooms.get(chatRoomId)).ifPresent(sessions -> {
-                for (WebSocketSession session : sessions) {
-                    sendWaitTime(session, waitTime);
-                }
-            });
-
-            n++;
-            if (n >= waitTimes.size()) {
-                n = 0;
-                i++;
-            }
-
-            lastWaitTime = waitTime;
-        }
-
-        for (Long chatRoomId : rooms.keySet()) {
-            if (!reservedReservations.containsKey(chatRoomId)) {
-                for (WebSocketSession session : rooms.get(chatRoomId)) {
-                    sendWaitTime(session, lastWaitTime);
-                }
-            }
-        }
-    }
-
-    private void sendWaitTime(WebSocketSession session, int waitTime) {
-        try {
-            if (session.isOpen()) {
-                session.sendMessage(new TextMessage(String.valueOf(waitTime)));
-            } else {
-                log.warn("웹소켓 세션이 닫힘: {}", session.getId());
-            }
-        } catch (IOException e) {
-            log.error("웹소켓 메시지 전송 실패: {}", e.getMessage());
-        }
-    }
 
     public Long findChatRoomIdByUsers(List<Long> userIds) {
         Map<Long, Set<WebSocketSession>> rooms = chatHandler.getRooms();
