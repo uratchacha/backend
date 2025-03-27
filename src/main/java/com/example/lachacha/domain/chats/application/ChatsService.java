@@ -6,7 +6,6 @@ import com.example.lachacha.domain.chats.domain.GroupChatRoom;
 import com.example.lachacha.domain.chats.domain.PrivateChatRoom;
 import com.example.lachacha.domain.chats.dto.ChatsMessageDto;
 import com.example.lachacha.domain.chats.dto.request.ExitChatRoomRequestDto;
-import com.example.lachacha.domain.chats.dto.request.GroupChatsRequestDto;
 import com.example.lachacha.domain.chats.dto.request.JoinGroupRequestDto;
 import com.example.lachacha.domain.chats.dto.request.PrivateChatsRequestDto;
 import com.example.lachacha.domain.chats.dto.response.ChatRoomResponseDto;
@@ -196,10 +195,10 @@ public class ChatsService
     }
 
     @Transactional
-    public ChatRoomResponseDto createGroupChat(GroupChatsRequestDto groupChatsRequestDto)
+    public ChatRoomResponseDto createGroupChat( )
     {
         Users users=authService.findUsersByAuth();
-        GroupChatRoom groupChatRoom = GroupChatRoom.builder().maxSize(groupChatsRequestDto.maxSize()).build();
+        GroupChatRoom groupChatRoom = GroupChatRoom.builder().maxSize(4).build();
 
         groupChatRoom.addMember(users);
         users.updateChatRoom(groupChatRoom);
