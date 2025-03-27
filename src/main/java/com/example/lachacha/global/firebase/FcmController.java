@@ -45,12 +45,14 @@ public class FcmController {
 
 
     // ✅ 푸시 알림 전송 테스트용 API
+
     @PostMapping("/send-notification")
-    public void sendNotification(@RequestBody FcmNotificationRequest request) {
-        fcmService.sendPushNotificationByUserId(
-                request.getUserId(),
-                request.getTitle(),
-                request.getBody()
-        );
+    public void sendNotificationToCurrentUser(@RequestBody FcmNotificationRequest request) {
+    Users user = authService.findUsersByAuth(); 
+    fcmService.sendPushNotificationByUserId(
+            user.getId(),
+            request.getTitle(),
+            request.getBody()
+    );
     }
 }
