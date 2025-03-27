@@ -10,6 +10,8 @@ ARG JWT_ISSUER
 ARG JWT_SECRET
 ARG DEPLOY_SECRET_TOKEN
 
+ARG FIREBASE_CONFIG
+
 # Set environment variables
 ENV SPRING_PROFILES_ACTIVE=${PROFILES}
 ENV ENV=${ENV}
@@ -23,7 +25,8 @@ ENV DEPLOY_SECRET_TOKEN=${DEPLOY_SECRET_TOKEN}
 
 COPY build/libs/*.jar app.jar
 
-
+RUN mkdir -p /app/src/main/resources && \
+    printf '%s' "$FIREBASE_CONFIG" > /app/src/main/resources/firebase-service-account.json
 
 # Run the application with environment variables
 ENTRYPOINT ["java", \
