@@ -6,6 +6,7 @@ import com.example.lachacha.domain.chats.domain.GroupChatRoom;
 import com.example.lachacha.domain.chats.domain.PrivateChatRoom;
 import com.example.lachacha.domain.chats.dto.ChatsMessageDto;
 import com.example.lachacha.domain.chats.dto.request.ExitChatRoomRequestDto;
+import com.example.lachacha.domain.chats.dto.request.GroupChatsRequestDto;
 import com.example.lachacha.domain.chats.dto.request.JoinGroupRequestDto;
 import com.example.lachacha.domain.chats.dto.request.PrivateChatsRequestDto;
 import com.example.lachacha.domain.chats.dto.response.ChatRoomResponseDto;
@@ -195,10 +196,17 @@ public class ChatsService
     }
 
     @Transactional
-    public ChatRoomResponseDto createGroupChat( )
+    public ChatRoomResponseDto createGroupChat(GroupChatsRequestDto groupChatsRequestDto)
     {
         Users users=authService.findUsersByAuth();
-        GroupChatRoom groupChatRoom = GroupChatRoom.builder().maxSize(4).build();
+        GroupChatRoom groupChatRoom = GroupChatRoom.builder()
+                .maxSize(4)
+                .job(groupChatsRequestDto.job() != null ? groupChatsRequestDto.job()
+                        : List.of("상관없음"))
+                .participationPurpose(groupChatsRequestDto.participationPurpose() != null ? groupChatsRequestDto.participationPurpose() : "상관없음")  // null이면 "상관없음"
+                .career(groupChatsRequestDto.career() != null ? groupChatsRequestDto.career() : "상관없음")  // null이면 "상관없음"
+                .interests(groupChatsRequestDto.interests() != null ? groupChatsRequestDto.interests() : "상관없음")
+                .build();
 
         groupChatRoom.addMember(users);
         users.updateChatRoom(groupChatRoom);

@@ -2,10 +2,15 @@ package com.example.lachacha.domain.chats.dto.request;
 
 import lombok.Builder;
 
+import java.util.List;
+
 @Builder
 public record GroupChatsRequestDto
         (
-                int maxSize
+                List<String> job,
+                String career,
+                String interests,
+                String participationPurpose
         )
 {
 }
