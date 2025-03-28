@@ -26,6 +26,9 @@ public abstract class ChatRoom
 
     private int maxSize;
 
+    @Column(name = "chatroom_type", insertable = false, updatable = false)
+    private String chatroomType;
+
     @OneToMany(mappedBy = "chatRoom")
     @Builder.Default
     private List<Users> members=new ArrayList<>();

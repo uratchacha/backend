@@ -10,6 +10,7 @@ import com.example.lachacha.domain.chats.dto.request.GroupChatsRequestDto;
 import com.example.lachacha.domain.chats.dto.request.JoinGroupRequestDto;
 import com.example.lachacha.domain.chats.dto.request.PrivateChatsRequestDto;
 import com.example.lachacha.domain.chats.dto.response.ChatRoomResponseDto;
+import com.example.lachacha.domain.chats.dto.response.GroupChatRoomResponseDto;
 import com.example.lachacha.domain.chats.exception.ChatsException;
 import com.example.lachacha.domain.user.application.UsersService;
 import com.example.lachacha.domain.user.domain.Users;
@@ -30,6 +31,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -271,14 +273,17 @@ public class ChatsService
         return ChatRoomResponseDto.from(chatRoom);
     }
 
-    public List<ChatRoomResponseDto> findAllGroupChatRoom()
+    public List<GroupChatRoomResponseDto> findAllGroupChatRoom()
     {
-        List<ChatRoomResponseDto> groupChatRoom=new ArrayList<>();
-        chatRoomRepository.findAll().forEach(chatRoom -> {
-            if(chatRoom.getMembers().size()>2)
-                groupChatRoom.add(ChatRoomResponseDto.from(chatRoom));
+        List<ChatRoom> chatRooms = chatRoomRepository.findGroupChatRooms();
+        List<GroupChatRoom> groupChatRooms = chatRooms.stream()
+                .map(GroupChatRoom.class::cast) // GroupChatRoom으로 캐스팅
+                .toList();
+        List<GroupChatRoomResponseDto> groupChatRoomResponseDtos = new ArrayList<>();
+        groupChatRooms.forEach(groupChatRoom -> {
+            groupChatRoomResponseDtos.add(GroupChatRoomResponseDto.from(groupChatRoom));
         });
-        return groupChatRoom;
+        return groupChatRoomResponseDtos;
     }
 
     public List<ChatRoomResponseDto> findAllPrivateChatRoom()

@@ -1,6 +1,7 @@
 package com.example.lachacha.domain.chats.domain;
 
 import jakarta.persistence.DiscriminatorValue;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -17,6 +18,7 @@ import static lombok.AccessLevel.PROTECTED;
 @SuperBuilder
 public class GroupChatRoom extends ChatRoom
 {
+    @ElementCollection
     private List<String> job; // null 가능
     private String career; // null 가능
     private String interests; // null 가능

@@ -8,6 +8,7 @@ import com.example.lachacha.domain.chats.dto.ChatsMessageDto;
 import com.example.lachacha.domain.chats.dto.request.GroupChatsRequestDto;
 import com.example.lachacha.domain.chats.dto.request.JoinGroupRequestDto;
 import com.example.lachacha.domain.chats.dto.request.PrivateChatsRequestDto;
+import com.example.lachacha.domain.chats.dto.response.GroupChatRoomResponseDto;
 import com.example.lachacha.domain.user.application.UsersService;
 import com.example.lachacha.domain.user.domain.Users;
 import com.example.lachacha.domain.user.domain.UsersRepository;
@@ -24,6 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -139,6 +141,7 @@ public class ChatsServiceWithDBTest
 
     @Test
     @Order(2)
+    @Rollback(false)
     void creatAndJoinGroupChatTest() throws Exception
     {
         GroupChatsRequestDto groupChatsRequestDto = GroupChatsRequestDto.builder()
@@ -146,8 +149,8 @@ public class ChatsServiceWithDBTest
         Mockito.when(authService.findUsersByAuth())
                 .thenReturn(user1) // 첫 번째 호출 -> user1
                 .thenReturn(user2) // 두 번째 호출 -> user2
-                .thenReturn(user3); // 세 번째 호출 -> user3
-
+                .thenReturn(user3) // 세 번째 호출 -> user3
+                .thenReturn(user4);
         ChatRoom chatRoom =chatRoomRepository.findById(chatsService.createGroupChat(groupChatsRequestDto).id()).orElse(null);
         assert chatRoom != null;
         JoinGroupRequestDto joinGroupRequestDto = JoinGroupRequestDto.builder()
@@ -160,22 +163,25 @@ public class ChatsServiceWithDBTest
         // 그룹 채팅에 사용자 추가
         chatsService.joinGroupChat(joinGroupRequestDto);
         chatsService.joinGroupChat(joinGroupRequestDto2);
-
+        chatsService.joinGroupChat(joinGroupRequestDto);
         // 알림 메시지 캡처를 위한 ArgumentCaptor 설정
         ArgumentCaptor<String> messageCaptor = ArgumentCaptor.forClass(String.class);
 
         // 알림 보내기 검증
+        Mockito.verify(notificationHandler).sendNotification(Mockito.eq(4L), messageCaptor.capture());
+
         Mockito.verify(notificationHandler).sendNotification(Mockito.eq(3L), messageCaptor.capture());
-        Mockito.verify(notificationHandler).sendNotification(Mockito.eq(2L), messageCaptor.capture());
         Mockito.verify(notificationHandler, Mockito.times(2))
+                .sendNotification(Mockito.eq(2L), messageCaptor.capture());
+        Mockito.verify(notificationHandler, Mockito.times(3))
                 .sendNotification(Mockito.eq(1L), messageCaptor.capture());
         // 메시지 출력 (디버깅용)
         System.out.println(messageCaptor.getAllValues());
 
         // Assertions (검증)
         assertThat(chatRoom).isNotNull(); // 채팅방이 null이 아니어야 한다.
-        assertThat(chatRoom.getMaxSize()).isEqualTo(3); // 최대 크기 확인
-        assertThat(chatRoom.getMembers().size()).isEqualTo(3); // 채팅방 멤버 수 확인
+        assertThat(chatRoom.getMaxSize()).isEqualTo(4); // 최대 크기 확인
+        assertThat(chatRoom.getMembers().size()).isEqualTo(4); // 채팅방 멤버 수 확인
 
         // 각 사용자에게 전송된 메시지 내용 검증
     }
@@ -213,6 +219,23 @@ public class ChatsServiceWithDBTest
         // 알림 보내기 검증
         Mockito.verify(chatHandler).handleTextMessage(Mockito.eq(chatMessageDto.chatRoomId()), messageCaptor.capture());
         System.out.println(messageCaptor.getValue());
+    }
+
+    @Test
+    @Order(5)
+    void findAllGroupChatRoom()
+    {
+        ChatRoom chatRoom = chatRoomRepository.findAll().get(0);
+        System.out.println(chatRoom.getChatroomType());
+
+        List<GroupChatRoomResponseDto> groupChatRoomResponseDto =chatsService.findAllGroupChatRoom();
+        for(GroupChatRoomResponseDto groupChatRoomResponseDto1 : groupChatRoomResponseDto)
+        {
+            System.out.println(groupChatRoomResponseDto1.maxSize());
+        }
+        chatRoomRepository.deleteAll();
+        List<ChatRoom> chatRooms = chatRoomRepository.findAll();
+        assertThat(chatRooms.size()).isEqualTo(0);
     }
 
 }
