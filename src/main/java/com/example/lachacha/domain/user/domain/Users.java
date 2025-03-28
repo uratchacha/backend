@@ -67,7 +67,7 @@ public class Users implements UserDetails
 
     private String interestJobValue;
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.LAZY)
     @Builder.Default
     private List<String> interests=new ArrayList<>();
 

@@ -232,6 +232,7 @@ public class ChatsServiceWithDBTest
         for(GroupChatRoomResponseDto groupChatRoomResponseDto1 : groupChatRoomResponseDto)
         {
             System.out.println(groupChatRoomResponseDto1.maxSize());
+            System.out.println(groupChatRoomResponseDto1.members());
         }
         chatRoomRepository.deleteAll();
         List<ChatRoom> chatRooms = chatRoomRepository.findAll();

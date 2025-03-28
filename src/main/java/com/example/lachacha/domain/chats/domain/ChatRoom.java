@@ -29,7 +29,7 @@ public abstract class ChatRoom
     @Column(name = "chatroom_type", insertable = false, updatable = false)
     private String chatroomType;
 
-    @OneToMany(mappedBy = "chatRoom")
+    @OneToMany(mappedBy = "chatRoom", fetch = FetchType.LAZY)
     @Builder.Default
     private List<Users> members=new ArrayList<>();
 
