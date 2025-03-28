@@ -7,6 +7,7 @@ import com.example.lachacha.domain.chats.dto.request.GroupChatsRequestDto;
 import com.example.lachacha.domain.chats.dto.request.JoinGroupRequestDto;
 import com.example.lachacha.domain.chats.dto.request.PrivateChatsRequestDto;
 import com.example.lachacha.domain.chats.dto.response.ChatRoomResponseDto;
+import com.example.lachacha.domain.chats.dto.response.ChatRoomUserResponseDto;
 import com.example.lachacha.domain.chats.dto.response.GroupChatRoomResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -79,6 +80,14 @@ public class ChatsController
         return ResponseEntity.status(HttpStatus.OK)
                 .body(chatsService.findChatRoomById(chatRoomId));
     }
+    @GetMapping("/user-nickName/{chatRoomId}")
+    public ResponseEntity<ChatRoomUserResponseDto> getChatRoomUserNickNameById(@PathVariable Long chatRoomId)
+    {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(chatsService.findChatRoomUserById(chatRoomId));
+    }
+
+
 
     @GetMapping("/group-chatroom")
     public ResponseEntity<List<GroupChatRoomResponseDto>> getAllGroupChatRoom()

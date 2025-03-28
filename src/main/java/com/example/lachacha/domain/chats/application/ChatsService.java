@@ -10,6 +10,7 @@ import com.example.lachacha.domain.chats.dto.request.GroupChatsRequestDto;
 import com.example.lachacha.domain.chats.dto.request.JoinGroupRequestDto;
 import com.example.lachacha.domain.chats.dto.request.PrivateChatsRequestDto;
 import com.example.lachacha.domain.chats.dto.response.ChatRoomResponseDto;
+import com.example.lachacha.domain.chats.dto.response.ChatRoomUserResponseDto;
 import com.example.lachacha.domain.chats.dto.response.GroupChatRoomResponseDto;
 import com.example.lachacha.domain.chats.exception.ChatsException;
 import com.example.lachacha.domain.user.application.UsersService;
@@ -271,6 +272,11 @@ public class ChatsService
         ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId)
                 .orElseThrow(() -> new ChatsException(MyErrorCode.CHATROOM_NOT_FOUND));
         return ChatRoomResponseDto.from(chatRoom);
+    }
+
+    public ChatRoomUserResponseDto findChatRoomUserById(Long chatRoomUserId) {
+        ChatRoom chatRoom = chatRoomRepository.findById(chatRoomUserId).orElseThrow();
+        return ChatRoomUserResponseDto.from(chatRoom.getMembers());
     }
 
     public List<GroupChatRoomResponseDto> findAllGroupChatRoom()
