@@ -94,7 +94,6 @@ public class UsersServiceTest
         System.out.println(savedUser.getNickName());
         assertNotNull(savedUser);
         assertTrue(bCryptPasswordEncoder.matches("securePassword", savedUser.getPassword())); // 비밀번호 검증
-
     }
 
     @Test

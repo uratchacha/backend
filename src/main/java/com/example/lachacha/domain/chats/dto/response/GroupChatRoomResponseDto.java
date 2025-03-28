@@ -8,7 +8,7 @@ import java.util.List;
 public record GroupChatRoomResponseDto(
         Long id,
         int maxSize,
-        List<Users> members,
+        int members,
         List<String> job,
         String career,
         String interests,
@@ -18,7 +18,7 @@ public record GroupChatRoomResponseDto(
         return new GroupChatRoomResponseDto(
                 groupChatRoom.getId(),
                 groupChatRoom.getMaxSize(),
-                groupChatRoom.getMembers(),
+                groupChatRoom.getMembers().size(),
                 groupChatRoom.getJob(),
                 groupChatRoom.getCareer(),
                 groupChatRoom.getInterests(),
