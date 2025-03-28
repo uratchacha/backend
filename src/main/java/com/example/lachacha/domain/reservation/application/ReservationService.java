@@ -7,6 +7,7 @@ import com.example.lachacha.domain.reservation.domain.ReservationRepository;
 import com.example.lachacha.domain.reservation.enums.ReservationState;
 import com.example.lachacha.domain.reservation.exception.ReservationException;
 import com.example.lachacha.domain.user.domain.Users;
+import com.example.lachacha.global.auth.application.AuthService;
 import com.example.lachacha.global.exception.MyErrorCode;
 import com.example.lachacha.global.webSocket.networkingTables.TableWaitTimeHandler;
 import lombok.RequiredArgsConstructor;
@@ -24,12 +25,14 @@ public class ReservationService {
     private final ReservationRepository reservationRepository;
     private final TableWaitTimeHandler tableWaitTimeHandler;
     private final ChatsService chatsService;
-
+    private final AuthService authService;
     private final Map<Long, Long> reservedReservations = new LinkedHashMap<>(); // 채팅방 ID → 예약 ID 매핑
 
     @Transactional
-    public void consentOrCreateReservation(Long chatRoomId, Long userId) {
+    public void consentOrCreateReservation(Long chatRoomId) {
         Long reservationId = tableWaitTimeHandler.getReservationIdByChatRoomId(chatRoomId);
+
+        Long userId = authService.findUsersByAuth().getId();
 
         // 예약이 없으면 생성
         if (reservationId == null) {

@@ -3,7 +3,6 @@ package com.example.lachacha.domain.networkingTable.presentation;
 
 import com.example.lachacha.domain.networkingTable.application.NetworkingTableService;
 import com.example.lachacha.domain.networkingTable.domain.NetworkingTable;
-import com.example.lachacha.domain.networkingTable.dto.NetworkingRequestDto;
 import com.example.lachacha.domain.networkingTable.dto.NetworkingTableRequestDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -37,15 +36,15 @@ public class NetworkingTableController {
         return ResponseEntity.noContent().build();
     }
     //네트워킹 시작
-    @PostMapping("/start")
-    public ResponseEntity<Void> startNetworking(@RequestBody NetworkingRequestDto requestDto) {
-        networkingTableService.startNetworking(requestDto);
+    @PostMapping("/start/{tableNumber}")
+    public ResponseEntity<Void> startNetworking(@PathVariable("tableNumber") String tableNumber) {
+        networkingTableService.startNetworking(tableNumber);
         return ResponseEntity.ok().build();
     }
     //네트워킹 종료
-    @PostMapping("/end")
-    public ResponseEntity<Void> endNetworking(@RequestBody NetworkingRequestDto requestDto) {
-        networkingTableService.endNetworking(requestDto);
+    @PostMapping("/end/{tableNumber}")
+    public ResponseEntity<Void> endNetworking(@PathVariable("tableNumber") String tableNumber) {
+        networkingTableService.endNetworking(tableNumber);
         return ResponseEntity.ok().build();
     }
 
