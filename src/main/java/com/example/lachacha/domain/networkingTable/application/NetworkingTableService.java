@@ -11,6 +11,7 @@ import com.example.lachacha.domain.networkingTable.enums.TableState;
 import com.example.lachacha.domain.networkingTable.exception.NetworkingTableException;
 import com.example.lachacha.domain.reservation.application.ReservationService;
 import com.example.lachacha.domain.user.domain.Users;
+import com.example.lachacha.global.auth.application.AuthService;
 import com.example.lachacha.global.exception.MyErrorCode;
 import com.example.lachacha.global.webSocket.networkingTables.TableWaitTimeHandler;
 import lombok.RequiredArgsConstructor;
@@ -33,6 +34,7 @@ public class NetworkingTableService {
     private final TableWaitTimeHandler tableWaitTimeHandler;
     private final ReservationService reservationService;
     private final NetworkingConfig networkingConfig;
+    private final AuthService authService;
 
     public NetworkingTable createTable(NetworkingTableRequestDto request) {
         NetworkingTable table = NetworkingTable.builder()
@@ -76,17 +78,18 @@ public class NetworkingTableService {
 
     // 네트워킹 시작
     @Transactional
-    public void startNetworking(NetworkingRequestDto requestDto) {
-        NetworkingTable table = networkingTableRepository.findByTableNumber(requestDto.getTableNumber())
+    public void startNetworking(String tableNumber) {
+        NetworkingTable table = networkingTableRepository.findByTableNumber(tableNumber)
                 .orElseThrow(() -> new NetworkingTableException(MyErrorCode.TABLE_NOT_FOUND));
 
+        Long userId = authService.findUsersByAuth().getId();
         //예약된 상태만 가능
         if(isTableNotInState(table,TableState.RESERVED)){
             throw new NetworkingTableException(MyErrorCode.TABLE_NOT_RESERVED);
         }
 
         //테이블에 속한 사용자만 네트워킹 시작 가능
-        if (isUserNotInTable(table, requestDto.getUserId())) {
+        if (isUserNotInTable(table, userId)) {
             throw new NetworkingTableException(MyErrorCode.USER_NOT_IN_TABLE);
         }
 
@@ -97,9 +100,11 @@ public class NetworkingTableService {
 
     //네트워킹 종료
     @Transactional
-    public void endNetworking(NetworkingRequestDto requestDto) {
-        NetworkingTable table = networkingTableRepository.findByTableNumber(requestDto.getTableNumber())
+    public void endNetworking(String tableNumber) {
+        NetworkingTable table = networkingTableRepository.findByTableNumber(tableNumber)
                 .orElseThrow(() -> new NetworkingTableException(MyErrorCode.TABLE_NOT_FOUND));
+
+        Long userId = authService.findUsersByAuth().getId();
 
         //네트워킹이 진행중인 상태만 가능
         if(isTableNotInState(table,TableState.OCCUPIED)){
@@ -107,7 +112,7 @@ public class NetworkingTableService {
         }
 
         //테이블에 속한 사용자만 네트워킹 종료 가능
-        if (isUserNotInTable(table, requestDto.getUserId())) {
+        if (isUserNotInTable(table, userId)) {
             throw new NetworkingTableException(MyErrorCode.USER_NOT_IN_TABLE);
         }
 

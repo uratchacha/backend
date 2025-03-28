@@ -19,9 +19,9 @@ public class ReservationController {
     private final ReservationService reservationService;
 
     // 예약 동의 (예약이 없으면 생성 후 동의까지)
-    @PostMapping("/consent")
-    public ResponseEntity<Void> consentToReservation(@RequestBody ReservationConsentRequestDto requestDto) {
-        reservationService.consentOrCreateReservation(requestDto.getChatRoomId(), requestDto.getUserId());
+    @PostMapping("/consent/{chatRoomId}")
+    public ResponseEntity<Void> consentToReservation(@PathVariable("chatRoomId") Long chatRoomId) {
+        reservationService.consentOrCreateReservation(chatRoomId);
         return ResponseEntity.ok().build();
     }
 
