@@ -7,6 +7,7 @@ import com.example.lachacha.domain.chats.dto.request.GroupChatsRequestDto;
 import com.example.lachacha.domain.chats.dto.request.JoinGroupRequestDto;
 import com.example.lachacha.domain.chats.dto.request.PrivateChatsRequestDto;
 import com.example.lachacha.domain.chats.dto.response.ChatRoomResponseDto;
+import com.example.lachacha.domain.chats.dto.response.GroupChatRoomResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -80,7 +81,7 @@ public class ChatsController
     }
 
     @GetMapping("/group-chatroom")
-    public ResponseEntity<List<ChatRoomResponseDto>> getAllGroupChatRoom()
+    public ResponseEntity<List<GroupChatRoomResponseDto>> getAllGroupChatRoom()
     {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(chatsService.findAllGroupChatRoom());
