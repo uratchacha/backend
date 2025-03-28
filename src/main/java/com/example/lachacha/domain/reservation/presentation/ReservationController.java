@@ -1,15 +1,9 @@
 package com.example.lachacha.domain.reservation.presentation;
 
 import com.example.lachacha.domain.reservation.application.ReservationService;
-import com.example.lachacha.domain.reservation.dto.ReservationConsentRequestDto;
-import com.example.lachacha.domain.reservation.dto.ReservationCreateRequestDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/reservation")

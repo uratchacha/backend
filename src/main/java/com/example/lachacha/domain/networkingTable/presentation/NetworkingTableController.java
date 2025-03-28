@@ -3,7 +3,6 @@ package com.example.lachacha.domain.networkingTable.presentation;
 
 import com.example.lachacha.domain.networkingTable.application.NetworkingTableService;
 import com.example.lachacha.domain.networkingTable.domain.NetworkingTable;
-import com.example.lachacha.domain.networkingTable.dto.NetworkingRequestDto;
 import com.example.lachacha.domain.networkingTable.dto.NetworkingTableRequestDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

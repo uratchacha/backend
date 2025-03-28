@@ -5,7 +5,6 @@ import com.example.lachacha.domain.chats.dto.response.ChatRoomResponseDto;
 import com.example.lachacha.domain.networkingTable.config.NetworkingConfig;
 import com.example.lachacha.domain.networkingTable.domain.NetworkingTable;
 import com.example.lachacha.domain.networkingTable.domain.NetworkingTableRepository;
-import com.example.lachacha.domain.networkingTable.dto.NetworkingRequestDto;
 import com.example.lachacha.domain.networkingTable.dto.NetworkingTableRequestDto;
 import com.example.lachacha.domain.networkingTable.enums.TableState;
 import com.example.lachacha.domain.networkingTable.exception.NetworkingTableException;
