@@ -34,7 +34,7 @@ public class BusinessCardService {
     public BusinessCardResponseDto addBusinessCard(BusinessCardRequestDto dto) {
         Users currentUser = authService.findUsersByAuth();
 
-        Optional<BusinessCard> existingCard = businessCardRepository.findByEmailAndUser(dto.getEmail(), currentUser);
+        Optional<BusinessCard> existingCard = businessCardRepository.findByUsernameAndUser(dto.getUsername(), currentUser);
         if (existingCard.isPresent()) {
             throw new BusinessCardException(DUPLICATE_BUSINESS_CARD);
         }
@@ -63,10 +63,11 @@ public class BusinessCardService {
         businessCardRepository.delete(card);
     }
 
-    public BusinessCardResponseDto updateBusinessCard(Long id, BusinessCardRequestDto dto) {
+    public BusinessCardResponseDto updateBusinessCard(BusinessCardRequestDto dto) {
         Users currentUser = authService.findUsersByAuth();
 
-        BusinessCard card = businessCardRepository.findById(id)
+        String username = currentUser.getUsername();
+        BusinessCard card = businessCardRepository.findByUsernameAndUser(username, currentUser)
                 .orElseThrow(() -> new BusinessCardException(MyErrorCode.INVALID_INPUT));
 
         if (!card.getUser().getId().equals(currentUser.getId())) {
@@ -74,8 +75,8 @@ public class BusinessCardService {
         }
 
         // 중복 이메일 체크 (자기 자신은 제외)
-        Optional<BusinessCard> duplicate = businessCardRepository.findByEmailAndUser(dto.getEmail(), currentUser);
-        if (duplicate.isPresent() && !duplicate.get().getId().equals(id)) {
+        Optional<BusinessCard> duplicate = businessCardRepository.findByUsernameAndUser(dto.getUsername(), currentUser);
+        if (duplicate.isPresent() && !duplicate.get().getId().equals(card.getId())) {
             throw new BusinessCardException(MyErrorCode.DUPLICATE_BUSINESS_CARD);
         }
 

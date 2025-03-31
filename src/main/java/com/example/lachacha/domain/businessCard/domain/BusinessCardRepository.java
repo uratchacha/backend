@@ -8,5 +8,5 @@ import java.util.Optional;
 
 public interface BusinessCardRepository extends JpaRepository<BusinessCard, Long> {
     List<BusinessCard> findByUser(Users user);
-    Optional<BusinessCard> findByEmailAndUser(String email, Users user);
+    Optional<BusinessCard> findByUsernameAndUser(String username, Users user);
 }
