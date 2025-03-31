@@ -61,7 +61,7 @@ public class ChatKafkaConsumer {
                     String[] data = payload.split(":", 2);
                     Long chatRoomId = Long.parseLong(data[0]);
                     String message = filterProfanity(data[1]);
-
+                    log.info("chatRoomId: {}, message: {}", chatRoomId, message);
                     chatHandler.broadcastMessage(chatRoomId, message);
                 } catch (Exception e) {
                     log.error("메시지 처리 중 오류 발생", e);
