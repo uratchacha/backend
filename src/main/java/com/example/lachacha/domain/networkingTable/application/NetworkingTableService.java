@@ -64,8 +64,7 @@ public class NetworkingTableService {
         List<Long> userIds = chatRoom.members().stream()
                 .map(Users::getId)
                 .toList();
-
-        return networkingTableRepository.findFirstByState(TableState.AVAILABLE)
+        String tableNumber=networkingTableRepository.findFirstByState(TableState.AVAILABLE)
                 .map(table -> {
                     table.reserveTable(userIds);
                     networkingTableRepository.save(table);
@@ -73,6 +72,9 @@ public class NetworkingTableService {
                     return table.getTableNumber();
                 })
                 .orElseThrow(() -> new NetworkingTableException(MyErrorCode.TABLE_OCCUPIED));
+        for(Long userId : userIds)
+            chatsService.sendChatNotification(userId,"테이블 요청이 왔습니다.", Long.valueOf(tableNumber));
+        return tableNumber;
     }
 
     // 네트워킹 시작
