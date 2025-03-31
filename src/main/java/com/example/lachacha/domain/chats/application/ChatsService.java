@@ -146,7 +146,7 @@ public class ChatsService
     }
 
 
-    private void sendChatNotification(Long userId, String messageBody, Long chatRoomId) {
+    public void sendChatNotification(Long userId, String messageBody, Long chatRoomId) {
         try {
             String notificationMessage = responseNotificationJson(messageBody,chatRoomId);
             notificationHandler.sendNotification(userId, notificationMessage);
@@ -170,6 +170,11 @@ public class ChatsService
         {
             notificationData.put("chatRoomId", chatRoomId);
             notificationData.put("messageType", "notification");
+        }
+        else if(Objects.equals(messageBody, "테이블 요청이 왔습니다."))
+        {
+            notificationData.put("tableNumber", chatRoomId);
+            notificationData.put("messageType", "table");
         }
         else if(chatRoomId!=null) {
             notificationData.put("chatRoomId", chatRoomId);
