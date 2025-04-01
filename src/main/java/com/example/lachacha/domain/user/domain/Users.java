@@ -2,6 +2,7 @@ package com.example.lachacha.domain.user.domain;
 
 import com.example.lachacha.domain.chats.domain.ChatRoom;
 import com.example.lachacha.domain.user.dto.request.UserUpdateRequestDto;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -80,6 +81,7 @@ public class Users implements UserDetails
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "chat_room_id")
+    @JsonBackReference
     private ChatRoom chatRoom;
 
     @Override

@@ -3,6 +3,7 @@ package com.example.lachacha.domain.chats.domain;
 import com.example.lachacha.domain.chats.exception.ChatsException;
 import com.example.lachacha.domain.user.domain.Users;
 import com.example.lachacha.global.exception.MyErrorCode;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -31,6 +32,7 @@ public abstract class ChatRoom
 
     @OneToMany(mappedBy = "chatRoom", fetch = FetchType.LAZY)
     @Builder.Default
+    @JsonManagedReference
     private List<Users> members=new ArrayList<>();
 
     public void addMember(Users user) {
