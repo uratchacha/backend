@@ -74,7 +74,7 @@ public class BusinessCardService {
             throw new BusinessCardException(MyErrorCode.USER_NOT_FOUND);
         }
 
-        // 중복 이메일 체크 (자기 자신은 제외)
+
         Optional<BusinessCard> duplicate = businessCardRepository.findByUsernameAndUser(dto.getUsername(), currentUser);
         if (duplicate.isPresent() && !duplicate.get().getId().equals(card.getId())) {
             throw new BusinessCardException(MyErrorCode.DUPLICATE_BUSINESS_CARD);
