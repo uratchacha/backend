@@ -28,7 +28,7 @@ spring:
       on-profile: common
 
   datasource:
-    url: ${DATASOURCE_URL:jdbc:h2:mem:testdb}
+    url: ${DATASOURCE_URL:jdbc:mysql://localhost:3306/testdb}
     username: ${DB_USERNAME:root}
     password: ${DB_PASSWORD:root}
     driver-class-name: com.mysql.cj.jdbc.Driver
