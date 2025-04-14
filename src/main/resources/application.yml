@@ -4,7 +4,7 @@ spring:
     group:
       blue: blue, blue-2,common
       green: green, green-c,common
-      test: test
+      test: test,common
       dev: common
 server:
   env: blue
@@ -30,7 +30,7 @@ spring:
   datasource:
     url: ${DATASOURCE_URL:jdbc:mysql://localhost:3306/testdb}
     username: ${DB_USERNAME:root}
-    password: ${DB_PASSWORD:root}
+    password: ${DB_PASSWORD:1234}
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
