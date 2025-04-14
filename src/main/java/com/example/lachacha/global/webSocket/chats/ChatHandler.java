@@ -38,9 +38,14 @@ public class ChatHandler extends TextWebSocketHandler
     }
 
 
-    public void handleTextMessage(Long chatRoomId, String message) {
+    public void handleTextMessage(Long chatRoomId, String message) throws IOException {
         log.info("사용자로부터 메시지 수신: {}", message);
-        chatProducer.sendMessage(chatRoomId, message);
+        try {
+            chatProducer.sendMessage(chatRoomId, message);
+        } catch (Exception e) {
+            log.error("Kafka 전송 실패로 인한 웹소켓으로 메시지 전송", e);
+            broadcastMessage(chatRoomId,message);
+        }
 
     }
 
