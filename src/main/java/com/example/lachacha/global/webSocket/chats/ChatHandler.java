@@ -1,7 +1,6 @@
 package com.example.lachacha.global.webSocket.chats;
 
 
-import com.example.lachacha.global.kafka.ChatProducer;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -11,21 +10,25 @@ import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.regex.Pattern;
 
 @Slf4j
-@RequiredArgsConstructor
+//@RequiredArgsConstructor
 @Component
 public class ChatHandler extends TextWebSocketHandler
 {
-    private final ChatProducer chatProducer;
+    //private final ChatProducer chatProducer;
     private static final Map<Long, Set<WebSocketSession>> rooms = new HashMap<>();
     private static final Map<Long, WebSocketSession> userSessions = new ConcurrentHashMap<>();
 
+    private final Queue<String> messageQueue = new ConcurrentLinkedQueue<>();
+    private final ScheduledExecutorService executorService = Executors.newScheduledThreadPool(Runtime.getRuntime().availableProcessors() * 2);
+
+    public ChatHandler() {
+        startBatchProcessing();
+    }
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) {
@@ -40,13 +43,41 @@ public class ChatHandler extends TextWebSocketHandler
 
     public void handleTextMessage(Long chatRoomId, String message) throws IOException {
         log.info("사용자로부터 메시지 수신: {}", message);
-        try {
-            chatProducer.sendMessage(chatRoomId, message);
-        } catch (Exception e) {
-            log.error("Kafka 전송 실패로 인한 웹소켓으로 메시지 전송", e);
-            broadcastMessage(chatRoomId,message);
-        }
+        String payload = chatRoomId + ":" + message; // 메시지에 채팅방 ID 포함
+        messageQueue.add(payload);
+    }
 
+    private void startBatchProcessing() {
+        int queueSize = messageQueue.size();
+        int batchSize = Math.min(queueSize / 5, 20);
+        batchSize = Math.max(batchSize, 5);
+        int finalBatchSize = batchSize;
+        executorService.scheduleAtFixedRate(() -> {
+            List<String> batch = new ArrayList<>();
+            for (int i = 0; i < finalBatchSize && !messageQueue.isEmpty(); i++) {
+                batch.add(messageQueue.poll());
+            }
+
+            if (batch.isEmpty()) return;
+
+            for (String payload : batch) {
+                try {
+                    String[] data = payload.split(":", 2);
+                    Long chatRoomId = Long.parseLong(data[0]);
+                    String message = filterProfanity(data[1]);
+                    log.info("chatRoomId: {}, message: {}", chatRoomId, message);
+                    broadcastMessage(chatRoomId, message);
+                } catch (Exception e) {
+                    log.error("메시지 처리 중 오류 발생", e);
+                }
+            }
+        }, 0, 500, TimeUnit.MILLISECONDS);
+    }
+
+    private static final Pattern PROFANITY_PATTERN = Pattern.compile("시발|개새끼|병신");
+
+    private String filterProfanity(String message) {
+        return PROFANITY_PATTERN.matcher(message).replaceAll(match -> "*".repeat(match.group().length()));
     }
 
     public void broadcastMessage(Long chatRoomId, String message) throws IOException {
