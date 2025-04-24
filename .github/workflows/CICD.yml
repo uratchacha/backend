@@ -135,30 +135,17 @@ jobs:
           script: |
             echo "Checking if the previous server (${{ env.CURRENT_UPSTREAM }}) is running..."
 
-            stop_and_remove_container() {
-              container_name=$1
-              if [ -n "$container_name" ]; then
-                echo "Stopping container $container_name..."
-                sudo docker stop $container_name || { echo "Failed to stop $container_name"; exit 1; }
-                echo "Removing container $container_name..."
-                sudo docker rm -f $container_name || { echo "Failed to remove $container_name"; exit 1; }
-              else
-                echo "No running container found with name: $container_name"
-              fi
-            }
-
-            # CURRENT_UPSTREAM이 blue인 경우 blue와 blue2 처리
-            if [ "${{ env.CURRENT_UPSTREAM }}" = "blue" ]; then
-              stop_and_remove_container "blue"
-              stop_and_remove_container "blue2"
-
-            # CURRENT_UPSTREAM이 green인 경우 green과 green2 처리
-            elif [ "${{ env.CURRENT_UPSTREAM }}" = "green" ]; then
-              stop_and_remove_container "green"
-              stop_and_remove_container "green2"
+            # 기존 서버 컨테이너 확인
+            EXISTING_CONTAINER=$(sudo docker ps -q --filter "name=${{ env.CURRENT_UPSTREAM }}")
+            if [ -n "$EXISTING_CONTAINER" ]; then
+              echo "Stopping container ${{ env.CURRENT_UPSTREAM }}..."
+              sudo docker stop ${{ env.CURRENT_UPSTREAM }} || { echo "Failed to stop ${{ env.CURRENT_UPSTREAM }}"; exit 1; }
+            
+              echo "Removing container ${{ env.CURRENT_UPSTREAM }}..."
+              sudo docker rm -f ${{ env.CURRENT_UPSTREAM }} || { echo "Failed to remove ${{ env.CURRENT_UPSTREAM }}"; exit 1; }
 
             else
-              echo "No containers to stop for the current upstream: ${{ env.CURRENT_UPSTREAM }}"
+              echo "No running container found with name: ${{ env.CURRENT_UPSTREAM }}"
             fi
 
             # 중지된 컨테이너 및 불필요한 리소스 정리 (단, 실행 중인 컨테이너는 영향을 받지 않도록 설정)
