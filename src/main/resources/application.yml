@@ -1,11 +1,10 @@
 spring:
   profiles:
-    active: dev
+    active: test
     group:
-      blue: blue, blue-2,common
-      green: green, green-c,common
-      test: test,common
-      dev: common
+      blue: blue, common
+      green: green, common
+      test: test, common
 server:
   env: blue
 
@@ -28,9 +27,9 @@ spring:
       on-profile: common
 
   datasource:
-    url: ${DATASOURCE_URL:jdbc:mysql://localhost:3306/testdb}
+    url: ${DATASOURCE_URL:jdbc:h2:mem:testdb}
     username: ${DB_USERNAME:root}
-    password: ${DB_PASSWORD:1234}
+    password: ${DB_PASSWORD:root}
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
@@ -66,19 +65,6 @@ serverName: blue_server
 spring:
   config:
     activate:
-      on-profile: blue-2
-
-server:
-  port: 8082
-  serverAddress: 3.37.80.119
-
-serverName: blue_server_2
-
----
-
-spring:
-  config:
-    activate:
       on-profile: green
 
 server:
@@ -86,16 +72,3 @@ server:
   serverAddress: 3.37.80.119
 
 serverName: green_server
-
----
-
-spring:
-  config:
-    activate:
-      on-profile: green-2
-
-server:
-  port: 8083
-  serverAddress: 3.37.80.119
-
-serverName: green_server_2
